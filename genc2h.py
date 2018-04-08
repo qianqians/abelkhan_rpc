@@ -8,12 +8,22 @@ sys.path.append("./parser")
 import os
 import jparser
 
-def gen(inputdir, lang, outputdir):
+def gen(inputdir, clang, hlang, outputdir):
         defmodulelist = []
 
-        suffix = ""
-        if lang == 'c++':
-                suffix = "hpp"
+        c_suffix = ""
+        if clang == 'c++':
+                c_suffix = "hpp"
+        if clang == 'c#':
+                c_suffix = "cs"
+        if clang == 'js':
+                c_suffix = "js"
+        
+        h_suffix = ""
+        if hlang == 'c#':
+                h_suffix = "cs"
+        if hlang == 'js':
+                h_suffix = "js"
 
         if not os.path.isdir(outputdir):
                 os.mkdir(outputdir)
@@ -26,9 +36,11 @@ def gen(inputdir, lang, outputdir):
                         genfilestr = file.readlines()
 
                         keydict = jparser.parser(genfilestr)
-                        print keydict
                                 
                         for module_name, module_info in keydict.items():
+                                if module_info["module_type"] != "client_call_hub":
+                                        raise ('%s has wrong module type %s' % (module_name, module_info["module_type"]))
+
                                 syspath = "./"
                                 if module_info["module_type"] == "client_call_hub":
                                         syspath += "client_call_hub/gen/"
@@ -36,7 +48,7 @@ def gen(inputdir, lang, outputdir):
                                         syspath += "hub_call_hub/gen/"
                                 elif module_info["module_type"] == "hub_call_client":
                                         syspath += "hub_call_client/gen/"
-                                if lang == "c++":
+                                if clang == "c++":
                                         syspath += "c++/"
                                 sys.path.append(syspath)
                                 import gencaller
@@ -47,9 +59,11 @@ def gen(inputdir, lang, outputdir):
                                 defmodulelist.append(module_name)
                                 
                                 callercode = gencaller.gencaller(module_name, module_info["method"])
-                                file = open(outputdir + '//' + module_name + 'caller.' + suffix, 'w')
+                                file = open(outputdir + '//' + module_name + 'caller.' + c_suffix, 'w')
                                 file.write(callercode)
                                 file.close
 
+
+
 if __name__ == '__main__':
-        gen(sys.argv[1], sys.argv[2], sys.argv[3])
+        gen(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])

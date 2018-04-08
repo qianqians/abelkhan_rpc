@@ -46,7 +46,7 @@ def gencaller(module_name, funcs):
         for i in funcs:
                 func_name = i[0]
                 if i[1] == "ntf":
-                        code += "    void " + func_name + "(std::string hub, std::string func, "
+                        code += "    void " + func_name + "("
                         count = 0
                         for item in i[2]:
                                 code += tools.gentypetocpp(item) + " argv" + str(count)
@@ -57,10 +57,10 @@ def gencaller(module_name, funcs):
                         code += "        auto v = std::make_shared<std::vector<boost::any> >();\n"
                         for count in range(len(i[2])):
                             code += "    v->push_back(argv" + str(count) + ");\n"
-                        code += "        client_handle_ptr->call_hub(hub, \"" + module_name + "\", func, v);\n"
+                        code += "        client_handle_ptr->call_hub(\"" + module_name + "\", \"" + func_name + "\", v);\n"
                         code += "    }\n\n"
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-                        code += "    std::shared_ptr<cb_" + func_name + "> " + func_name + "(std::string hub, std::string func, "
+                        code += "    std::shared_ptr<cb_" + func_name + "> " + func_name + "("
                         count = 0
                         for item in i[2]:
                                 code += tools.gentypetocpp(item) + " argv" + str(count)
@@ -74,7 +74,7 @@ def gencaller(module_name, funcs):
                         code += "        v->push_back(uuid);\n"
                         for count in range(len(i[2])):
                             code += "        v->push_back(argv" + str(count) + ");\n"
-                        code += "        client_handle_ptr->call_hub(hub, \"" + module_name + "\", func, v);\n"
+                        code += "        client_handle_ptr->call_hub(\"" + module_name + "\", \"" + func_name + "\", v);\n"
                         code += "        auto cb_func_obj = std::make_shared<cb_" + func_name + ">();\n"
                         code += "        cb_" + module_name + "_handle->map_" + func_name + ".insert(std::make_pair(uuid, cb_func_obj));\n"
                         code += "        return cb_func_obj;\n"

@@ -64,7 +64,7 @@ public:
     ~name(){
     }
 
-    std::shared_ptr<cb_func_test> func_test(std::string hub, std::string func, int64_t argv0, std::shared_ptr<std::vector<boost::any> > argv1, bool argv2){
+    std::shared_ptr<cb_func_test> func_test(int64_t argv0, std::shared_ptr<std::vector<boost::any> > argv1, bool argv2){
         boost::uuids::random_generator g;
         auto uuid = boost::lexical_cast<std::string>(g());
         auto v = std::make_shared<std::vector<boost::any> >();
@@ -72,7 +72,7 @@ public:
         v->push_back(argv0);
         v->push_back(argv1);
         v->push_back(argv2);
-        client_handle_ptr->call_hub(hub, "name", func, v);
+        client_handle_ptr->call_hub("name", "func_test", v);
         auto cb_func_obj = std::make_shared<cb_func_test>();
         cb_name_handle->map_func_test.insert(std::make_pair(uuid, cb_func_obj));
         return cb_func_obj;
