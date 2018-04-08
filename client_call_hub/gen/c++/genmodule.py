@@ -15,12 +15,12 @@ def genmodule(module_name, funcs):
         code += "#include <string>\n\n"
 
         code += "namespace module\n{\n"
-        code += "class " + module_name + " : public juggle::Imodule {\n"
+        code += "class " + module_name + " : public abelkhan::Module {\n"
         code += "public:\n"
         code += "    " + module_name + "(){\n"
         code += "        module_name = \"" + module_name + "\";\n"
         for i in funcs:
-                code += "        protcolcall_set.insert(std::make_pair(\"" + i[1] + "\", std::bind(&" + module_name + "::" + i[0] + ", this, std::placeholders::_1)));\n"
+                code += "        protcolcall_set.insert(std::make_pair(\"" + i[0] + "\", std::bind(&" + module_name + "::" + i[0] + ", this, std::placeholders::_1)));\n"
 
         code += "    }\n\n"
 
