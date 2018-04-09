@@ -4,6 +4,8 @@
 #define _name_req_h
 
 #include <string>
+#include <functional>
+
 #include <boost/any.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
@@ -13,16 +15,23 @@
 
 #include <module.h>
 
+namespace req
+{
 class cb_func_test{
 public:
-    boost::signal2::signal<void(int64_t) sigfunc_testcb;
+    boost::signal2::signal<void(int64_t)> sigfunc_testcb;
     void cb(int64_t argvs0){
         sigfunc_testcb(argvs0);
     }
 
-    boost::signal2::signal<void(int64_t) sigfunc_testerr;
+    boost::signal2::signal<void(int64_t)> sigfunc_testerr;
     void err(int64_t argvs0){
         sigfunc_testerr(argvs0);
+    }
+
+    void callBack(std::function<void(int64_t)> cb, std::function<int64_t> err){
+        sigfunc_testcb.connect(cb);
+        sigfunc_testerr.connect(err);
     }
 
 }
@@ -34,21 +43,19 @@ public:
     }
     std::map<std::string, std::shared_ptr<cb_func_test> > map_func_test;
     void func_test_rsp(std::shared_ptr<std::vector<boost::any> > argvs){
-        auto cb_uuid = boost::any_cast<std::string>(argvs[0];
+        auto cb_uuid = boost::any_cast<std::string>(argvs[0]);
         auto argv1 = boost::any_cast<int64_t>(argvs[1]);
         std::shared_ptr<cb_func_test> func_cb = map_func_test[cb_uuid];
         func_cb->cb(argv1);
     }
     void func_test_err(std::shared_ptr<std::vector<boost::any> > argvs){
-        auto cb_uuid = boost::any_cast<std::string>(argvs[0];
+        auto cb_uuid = boost::any_cast<std::string>(argvs[0]);
         auto argv1 = boost::any_cast<int64_t>(argvs[1]);
         std::shared_ptr<cb_func_test> func_cb = map_func_test[cb_uuid];
         func_cb->err(argv1);
     }
 };
 
-namespace req
-{
 class name {
 private:
     std::shared_ptr<client::client> client_handle_ptr;
@@ -76,6 +83,15 @@ public:
         auto cb_func_obj = std::make_shared<cb_func_test>();
         cb_name_handle->map_func_test.insert(std::make_pair(uuid, cb_func_obj));
         return cb_func_obj;
+    }
+
+    void func_test2(int64_t argv0,int64_t argv1,bool argv2,double argv3){
+        auto v = std::make_shared<std::vector<boost::any> >();
+    v->push_back(argv0);
+    v->push_back(argv1);
+    v->push_back(argv2);
+    v->push_back(argv3);
+        client_handle_ptr->call_hub("name", "func_test2", v);
     }
 
 };

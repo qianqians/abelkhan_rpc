@@ -10,6 +10,8 @@ def gencaller(module_name, funcs):
         head_code += "#define _" + module_name + "_req_h\n\n"
         
         head_code += "#include <string>\n"
+        head_code += "#include <functional>\n\n"
+        
         head_code += "#include <boost/any.hpp>\n"
         head_code += "#include <boost/uuid/uuid.hpp>\n"
         head_code += "#include <boost/uuid/uuid_generators.hpp>\n"
@@ -19,6 +21,9 @@ def gencaller(module_name, funcs):
 
         head_code += "#include <module.h>\n\n"
         
+        head_code +=  "namespace req\n"
+        head_code += "{\n"
+
         cb_code_head = "/*req cb code, codegen by abelkhan codegen*/\n"
         cb_code_head += "class cb_" + module_name + " : public common::imodule {\n"
         cb_code_head += "public:\n"
@@ -27,9 +32,7 @@ def gencaller(module_name, funcs):
         cb_code = ""
         cb_func_code = ""
         
-        code =  "namespace req\n"
-        code += "{\n"
-        code += "class " + module_name + " {\n"
+        code = "class " + module_name + " {\n"
         code += "private:\n"
         code += "    std::shared_ptr<client::client> client_handle_ptr;\n"
         code += "    std::shared_ptr<cb_" + module_name + "> cb_" + module_name + "_handle;\n\n"
@@ -89,7 +92,7 @@ def gencaller(module_name, funcs):
                                 count = count + 1
                                 if count < len(i[4]):
                                         cb_func_code += ", "
-                        cb_func_code += ") sig" + func_name + "cb;\n"
+                        cb_func_code += ")> sig" + func_name + "cb;\n"
                         cb_func_code += "    void cb("
                         count = 0
                         for item in i[4]:
@@ -114,7 +117,7 @@ def gencaller(module_name, funcs):
                                 count = count + 1
                                 if count < len(i[6]):
                                         cb_func_code += ", "
-                        cb_func_code += ") sig" + func_name + "err;\n"
+                        cb_func_code += ")> sig" + func_name + "err;\n"
                         cb_func_code += "    void err("
                         count = 0
                         for item in i[6]:
@@ -132,13 +135,31 @@ def gencaller(module_name, funcs):
                                         cb_func_code += ", "
                         cb_func_code += ");\n"
                         cb_func_code += "    }\n\n"
+                        cb_func_code += "    void callBack(std::function<void("
+                        count = 0
+                        for item in i[4]:
+                                cb_func_code += tools.gentypetocpp(item)
+                                count = count + 1
+                                if count < len(i[4]):
+                                        cb_func_code += ", "
+                        cb_func_code += ")> cb, std::function<"
+                        ount = 0
+                        for item in i[6]:
+                                cb_func_code += tools.gentypetocpp(item)
+                                count = count + 1
+                                if count < len(i[6]):
+                                        cb_func_code += ", "
+                        cb_func_code += "> err){\n"
+                        cb_func_code += "        sig" + func_name + "cb.connect(cb);\n"
+                        cb_func_code += "        sig" + func_name + "err.connect(err);\n"
+                        cb_func_code += "    }\n\n"
                         cb_func_code += "}\n"
 
                         cb_code_head += "        reg_cb(\"" + func_name + "_rsp\", std::bind(&cb_" + module_name + "::" + func_name + "_rsp), this, std::placeholders::_1);\n"
 
                         cb_code += "    std::map<std::string, std::shared_ptr<cb_" + func_name + "> > map_" + func_name + ";\n"
                         cb_code += "    void " + func_name + "_rsp(std::shared_ptr<std::vector<boost::any> > argvs){\n"
-                        cb_code += "        auto cb_uuid = boost::any_cast<std::string>(argvs[0];\n"
+                        cb_code += "        auto cb_uuid = boost::any_cast<std::string>(argvs[0]);\n"
                         count = 1
                         for item in i[4]:
                                 cb_code += "        auto argv" + str(count) + " = boost::any_cast<" + tools.gentypetocpp(item) + ">(argvs[" + str(count) + "]);\n"
@@ -154,7 +175,7 @@ def gencaller(module_name, funcs):
                         cb_code += ");\n"
                         cb_code += "    }\n"
                         cb_code += "    void " + func_name + "_err(std::shared_ptr<std::vector<boost::any> > argvs){\n"
-                        cb_code += "        auto cb_uuid = boost::any_cast<std::string>(argvs[0];\n"
+                        cb_code += "        auto cb_uuid = boost::any_cast<std::string>(argvs[0]);\n"
                         count = 1
                         for item in i[6]:
                                 cb_code += "        auto argv" + str(count) + " = boost::any_cast<" + tools.gentypetocpp(item) + ">(argvs[" + str(count) + "]);\n"
@@ -175,6 +196,7 @@ def gencaller(module_name, funcs):
         cb_code_head += "    }\n"
         code += "};\n\n"
         cb_code += "};\n\n"
+        
         code += "}\n\n"
         code += "#endif\n"
 
