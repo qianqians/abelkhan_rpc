@@ -66,5 +66,10 @@ def gen(inputdir, clang, hlang, outputdir):
                         file.write(callercode)
                         file.close
 
+                        modulecode = genmodule.genmodule(module_name, module_info["method"])
+                        file = open(outputdir + '//' + module_name + 'module.' + h_suffix, 'w')
+                        file.write(modulecode)
+                        file.close
+
 if __name__ == '__main__':
         gen(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])

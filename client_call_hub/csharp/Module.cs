@@ -4,6 +4,6 @@ namespace abelkhan
 {
     public class Module : imodule
     {
-        public abelkhan.Response rsp = null;
+        static public abelkhan.Response rsp = null;
     }
 }
