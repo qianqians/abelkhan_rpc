@@ -31,6 +31,8 @@ namespace req
         {
             onfunc_test_cb += cb;
             onfunc_test_err += err;
+        }
+
     }
 
     /*this cb code is codegen by abelkhan for c#*/

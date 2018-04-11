@@ -152,6 +152,7 @@ def gencaller(module_name, funcs):
                         cb_func += "        void callBack(" + func_name + "_handle_cb cb, " + func_name + "_handle_err err)\n        {\n"
                         cb_func += "            on" + func_name + "_cb += cb;\n"
                         cb_func += "            on" + func_name + "_err += err;\n"
+                        cb_func += "        }\n\n"
                         cb_func += "    }\n\n"
                 else:
                         raise "func:" + func_name + " wrong rpc type:" + i[1] + ", must req or ntf"
