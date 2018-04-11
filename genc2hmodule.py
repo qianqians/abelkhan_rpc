@@ -8,30 +8,15 @@ sys.path.append("./parser")
 import os
 import jparser
 
-def gen(inputdir, clang, hlang, outputdir):
+def gen(inputdir, lang, outputdir):
         defmodulelist = []
-
-        syspath = "./client_call_hub/gen/"       
-        c_suffix = ""
-        if clang == 'c++':
-                syspath += "c++/"
-                c_suffix = "hpp"
-        if clang == 'csharp':
-                syspath += "csharp/"
-                c_suffix = "cs"
-        if clang == 'js':
-                syspath += "js/"
-                c_suffix = "js"
-        sys.path.append(syspath)
-        import gencaller
-        sys.path.remove(syspath)
 
         syspath = "./client_call_hub/gen/"    
         h_suffix = ""
-        if hlang == 'csharp':
+        if lang == 'csharp':
                 syspath += "csharp/"
                 h_suffix = "cs"
-        if hlang == 'js':
+        if lang == 'js':
                 syspath += "js/"
                 h_suffix = "js"
         sys.path.append(syspath)
@@ -61,15 +46,10 @@ def gen(inputdir, clang, hlang, outputdir):
 
                         defmodulelist.append(module_name)
 
-                        callercode = gencaller.gencaller(module_name, module_info["method"])
-                        file = open(outputdir + '//' + module_name + 'caller.' + c_suffix, 'w')
-                        file.write(callercode)
-                        file.close
-
                         modulecode = genmodule.genmodule(module_name, module_info["method"])
                         file = open(outputdir + '//' + module_name + 'module.' + h_suffix, 'w')
                         file.write(modulecode)
                         file.close
 
 if __name__ == '__main__':
-        gen(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+        gen(sys.argv[1], sys.argv[2], sys.argv[3])
