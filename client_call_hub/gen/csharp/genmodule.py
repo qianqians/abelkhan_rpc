@@ -22,6 +22,7 @@ def genmodule(module_name, funcs):
         code += "        public " + module_name + "(hub.hub _hub)\n        {\n"
         code += "            module_name = \"" + module_name + "\";\n"
         code += "            hub_handle = _hub;\n"
+        code += "            hub.hub.modules.add_module(\"" + module_name + "\", this);\n"
         code += "        }\n\n"
 
         for i in funcs:

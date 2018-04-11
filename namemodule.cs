@@ -34,6 +34,7 @@ namespace rsp
         {
             module_name = "name";
             hub_handle = _hub;
+            hub.hub.modules.add_module("name", this);
         }
 
         public delegate void func_testhandle(Int64 argv0, ArrayList argv1, Boolean argv2);
