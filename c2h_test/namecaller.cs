@@ -86,7 +86,7 @@ namespace req
         cb_func_test func_test(Int64 argv0, ArrayList argv1, Boolean argv2)
         {
             var uuid = System.Guid.NewGuid().ToString();
-            client_handle.call_hub("name", "func_test", uuid, argv0,  argv1,  argv2);
+            client_handle.call_hub(hub_name, "name", "func_test", uuid, argv0,  argv1,  argv2);
 
             var cb_func_test_obj = new cb_func_test();
             cb_name_handle.map_func_test.Add(uuid, cb_func_test_obj);
@@ -96,7 +96,7 @@ namespace req
 
         void func_test2(Int64 argv0, Int64 argv1, Boolean argv2, Double argv3)
         {
-            client_handle.call_hub("name", "func_test2", argv0,  argv1,  argv2,  argv3);
+            client_handle.call_hub(hub_name, "name", "func_test2", argv0,  argv1,  argv2,  argv3);
         }
 
     }

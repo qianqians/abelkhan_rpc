@@ -11,16 +11,16 @@ import jparser
 def gen(inputdir, lang, outputdir):
         defmodulelist = []
 
-        syspath = "./hub_call_client/gen/"       
-        c_suffix = ""
+        syspath = "./hub_call_hub/gen/"    
+        h_suffix = ""
         if lang == 'csharp':
                 syspath += "csharp/"
-                c_suffix = "cs"
+                h_suffix = "cs"
         if lang == 'js':
                 syspath += "js/"
-                c_suffix = "js"
+                h_suffix = "js"
         sys.path.append(syspath)
-        import gencaller
+        import genmodule
         sys.path.remove(syspath)
         
         if not os.path.isdir(outputdir):
@@ -41,15 +41,15 @@ def gen(inputdir, lang, outputdir):
                         if module_name in defmodulelist:
                                 raise 'redefined module %s' % module_name
 
-                        if module_info["module_type"] != "hub_call_client":
+                        if module_info["module_type"] != "hub_call_hub":
                                 raise ('%s has wrong module type %s' % (module_name, module_info["module_type"]))
 
                         defmodulelist.append(module_name)
 
-                        callercode = gencaller.gencaller(module_name, module_info["method"])
-                        file = open(outputdir + '//' + module_name + 'caller.' + c_suffix, 'w')
-                        file.write(callercode)
-                        file.close()
+                        modulecode = genmodule.genmodule(module_name, module_info["method"])
+                        file = open(outputdir + '//' + module_name + 'module.' + h_suffix, 'w')
+                        file.write(modulecode)
+                        file.close
 
 if __name__ == '__main__':
         gen(sys.argv[1], sys.argv[2], sys.argv[3])

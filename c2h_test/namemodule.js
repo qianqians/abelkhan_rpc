@@ -1,15 +1,16 @@
 /*this rsp file is codegen by abelkhan for js*/
 
-function rsp_func_test(_hub)
+function rsp_func_test(_hub, _uuid)
 {
     this.hub_handle = _hub;
+    this.uuid = _uuid;
     this.call(argv0)
     {
-        _hub.gates.call_client(_hub.gates.current_client_uuid, "name", "func_test_rsp", argv0);
+        _hub.gates.call_client(_hub.gates.current_client_uuid, "name", "func_test_rsp", _uuid, argv0);
     }
     this.err(argv0)
     {
-        _hub.gates.call_client(_hub.gates.current_client_uuid, "name", "func_test_rsp", argv0);
+        _hub.gates.call_client(_hub.gates.current_client_uuid, "name", "func_test_err", _uuid, argv0);
     }
 }
 
@@ -22,9 +23,9 @@ function name(_hub)
     this.hub_handle = _hub;
     _hub.modules.add_module("name", this);
 
-    this.func_test = function(argv0, argv1, argv2)
+    this.func_test = function(uuid, argv0, argv1, argv2)
     {
-        _hub.modules.rsp = new rsp_func_test(_hub);
+        _hub.modules.rsp = new rsp_func_test(_hub, uuid);
         this.call_event("func_test", [argv0, argv1, argv2]);
         _hub.modules.rsp = null;
     }

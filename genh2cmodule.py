@@ -44,7 +44,7 @@ def gen(inputdir, lang, outputdir):
                         if module_name in defmodulelist:
                                 raise 'redefined module %s' % module_name
 
-                        if module_info["module_type"] != "client_call_hub":
+                        if module_info["module_type"] != "hub_call_client":
                                 raise ('%s has wrong module type %s' % (module_name, module_info["module_type"]))
 
                         defmodulelist.append(module_name)

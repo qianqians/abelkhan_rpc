@@ -1,0 +1,4 @@
+module name(hub_call_hub){
+    func_test ntf(int, int, bool, float);
+    func_test1 req(string, array, table) rsp(string, array, table) err(int);
+}

@@ -35,7 +35,7 @@ def gencaller(module_name, funcs):
                                 if count < len(i[2]):
                                         code += ", "
                         code += ")\n    {\n"
-                        code += "        _client_handle.call_hub(\"" + module_name + "\", \"" + func_name + "\","
+                        code += "        _client_handle.call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "\","
                         count = 0
                         for item in i[2]:
                                 code += " argv" + str(count)
@@ -54,7 +54,7 @@ def gencaller(module_name, funcs):
                         code += ")\n    {\n"
                         code += "        const uuidv1 = require('uuid/v1');\n"
                         code += "        var uuid = uuidv1();\n\n"
-                        code += "        _client_handle.call_hub(\"" + module_name + "\", \"" + func_name + "\", uuid,"
+                        code += "        _client_handle.call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "\", uuid,"
                         count = 0
                         for item in i[2]:
                                 code += " argv" + str(count)

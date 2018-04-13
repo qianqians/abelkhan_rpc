@@ -66,7 +66,7 @@ function name_hubproxy (hub_name, _client_handle)
         const uuidv1 = require('uuid/v1');
         var uuid = uuidv1();
 
-        _client_handle.call_hub("name", "func_test", uuid, argv0,  argv1,  argv2);
+        _client_handle.call_hub(hub_name, "name", "func_test", uuid, argv0,  argv1,  argv2);
 
         var cb_func_test_obj = new cb_func_test();
         this.cb_name_handle[uuid] = cb_func_test_obj;
@@ -76,7 +76,7 @@ function name_hubproxy (hub_name, _client_handle)
 
     this.func_test2 = function(argv0, argv1, argv2, argv3)
     {
-        _client_handle.call_hub("name", "func_test2", argv0,  argv1,  argv2,  argv3);
+        _client_handle.call_hub(hub_name, "name", "func_test2", argv0,  argv1,  argv2,  argv3);
     }
 
 }

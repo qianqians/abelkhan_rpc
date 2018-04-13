@@ -11,7 +11,7 @@ import jparser
 def gen(inputdir, lang, outputdir):
         defmodulelist = []
 
-        syspath = "./hub_call_client/gen/"       
+        syspath = "./hub_call_hub/gen/"       
         c_suffix = ""
         if lang == 'csharp':
                 syspath += "csharp/"
@@ -41,7 +41,7 @@ def gen(inputdir, lang, outputdir):
                         if module_name in defmodulelist:
                                 raise 'redefined module %s' % module_name
 
-                        if module_info["module_type"] != "hub_call_client":
+                        if module_info["module_type"] != "hub_call_hub":
                                 raise ('%s has wrong module type %s' % (module_name, module_info["module_type"]))
 
                         defmodulelist.append(module_name)

@@ -57,7 +57,7 @@ def gencaller(module_name, funcs):
         code += "    std::string hub_name;\n"
         code += "    std::shared_ptr<client::client> client_handle_ptr;\n\n"
         code += "public:\n"
-        code += "    " + module_name + "_hubproxy(std::string _hub_name, _client_handle_ptr)\n        {"
+        code += "    " + module_name + "_hubproxy(std::string _hub_name, std::shared_ptr<client::client> _client_handle_ptr){\n"
         code += "        hub_name = _hub_name;\n"
         code += "        client_handle_ptr = _client_handle_ptr;\n"
         code += "    }\n\n" 

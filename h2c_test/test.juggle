@@ -1,4 +1,4 @@
-module name(client_call_hub){
+module name(hub_call_client){
     func_test ntf(int, int, bool, float);
     func_test1 multicast(string, array, table);
     func_test2 broadcast(string, array, table);

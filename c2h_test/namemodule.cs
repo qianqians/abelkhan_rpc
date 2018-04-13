@@ -10,19 +10,20 @@ namespace rsp
 {
     public class rsp_func_test : abelkhan.Response
     {
-        public hub.hub hub_handle;
-        public rsp_func_test(hub.hub _hub)
+        public string uuid;
+
+        public rsp_func_test(string _uuid)
         {
-            hub_handle = _hub;
+            uuid = _uuid;
         }
 
         void call(Int64 argv0)
         {
-            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, "name", "func_test_rsp", argv0);
+            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, "name", "func_test_rsp", uuid, argv0);
         }
         void err(Int64 argv0)
         {
-            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, "name", "func_test_rsp", argv0);
+            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, "name", "func_test_err", uuid, argv0);
         }
     }
 
@@ -43,12 +44,13 @@ namespace rsp
         {
             if(onfunc_test != null)
             {
-                var argv0 = ((Int64)_event[0]);
-                var argv1 = ((ArrayList)_event[1]);
-                var argv2 = ((Boolean)_event[2]);
+                string uuid = (string)_event[0];
+                var argv0 = ((Int64)_event[1]);
+                var argv1 = ((ArrayList)_event[2]);
+                var argv2 = ((Boolean)_event[3]);
 
-                rsp = new rsp_func_test(hub_handle);
-                onfunc_test( argv0,  argv1,  argv2);
+                rsp = new rsp_func_test(uuid);
+                onfunc_test( argv1,  argv2,  argv3);
                 rsp = null;
             }
         }

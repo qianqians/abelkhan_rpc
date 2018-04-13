@@ -74,20 +74,18 @@ public:
     }
 
     std::shared_ptr<name_hubproxy> get_hub(std::string hub_name) {
-        renturn std::make_shared(hub_name, module_name, client_handle_ptr);
+        renturn std::make_shared<name_hubproxy>(hub_name, client_handle_ptr);
     }
 }
 
 class name_hubproxy {
 public:
     std::string hub_name;
-    std::string module_name;
     std::shared_ptr<client::client> client_handle_ptr;
 
 public:
-    name_hubproxy(std::string _hub_name, _module_name, _client_handle_ptr)
-        {        hub_name = _hub_name;
-        module_name = _module_name;
+    name_hubproxy(std::string _hub_name, std::shared_ptr<client::client> _client_handle_ptr){
+        hub_name = _hub_name;
         client_handle_ptr = _client_handle_ptr;
     }
 
