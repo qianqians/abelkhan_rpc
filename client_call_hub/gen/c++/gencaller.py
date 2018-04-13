@@ -59,7 +59,7 @@ def gencaller(module_name, funcs):
                         code += "){\n"
                         code += "        auto v = std::make_shared<std::vector<boost::any> >();\n"
                         for count in range(len(i[2])):
-                            code += "    v->push_back(argv" + str(count) + ");\n"
+                            code += "        v->push_back(argv" + str(count) + ");\n"
                         code += "        client_handle_ptr->call_hub(\"" + module_name + "\", \"" + func_name + "\", v);\n"
                         code += "    }\n\n"
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":

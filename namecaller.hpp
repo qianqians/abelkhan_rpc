@@ -87,10 +87,10 @@ public:
 
     void func_test2(int64_t argv0,int64_t argv1,bool argv2,double argv3){
         auto v = std::make_shared<std::vector<boost::any> >();
-    v->push_back(argv0);
-    v->push_back(argv1);
-    v->push_back(argv2);
-    v->push_back(argv3);
+        v->push_back(argv0);
+        v->push_back(argv1);
+        v->push_back(argv2);
+        v->push_back(argv3);
         client_handle_ptr->call_hub("name", "func_test2", v);
     }
 

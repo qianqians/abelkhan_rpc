@@ -14,7 +14,7 @@ namespace req
             if (onfunc_test_cb != null)
             {
                 onfunc_test_cb(argv0);
-            {
+            }
         }
 
         public delegate void func_test_handle_err();
@@ -24,7 +24,7 @@ namespace req
             if (onfunc_test_err != null)
             {
                 onfunc_test_err(argv0);
-            {
+            }
         }
 
         void callBack(func_test_handle_cb cb, func_test_handle_err err)
@@ -38,14 +38,14 @@ namespace req
     /*this cb code is codegen by abelkhan for c#*/
     public class cb_name : common.imodule
     {
-        Hashtable map_func_test = new Hashtable();
-        void func_test_rsp(string uuid, Int64 argv0)
+        public Hashtable map_func_test = new Hashtable();
+        public void func_test_rsp(string uuid, Int64 argv0)
         {
             var rsp = (cb_func_test)map_func_test[uuid];
             rsp.cb(argv0);
         }
 
-        void func_test_err(string uuid, Int64 argv0)
+        public void func_test_err(string uuid, Int64 argv0)
         {
             var rsp = (cb_func_test)map_func_test[uuid];
             rsp.err(argv0);
@@ -71,14 +71,14 @@ namespace req
             client_handle.call_hub("name", "func_test", uuid, argv0,  argv1,  argv2);
 
             var cb_func_test_obj = new cb_func_test();
-            cb_name_handle.Add(uuid, cb_func_test_obj);
+            cb_name_handle.map_func_test.Add(uuid, cb_func_test_obj);
 
             return cb_func_test_obj;
         }
 
         void func_test2(Int64 argv0, Int64 argv1, Boolean argv2, Double argv3)
         {
-            client_handle.call_hub("name", "func_test2", argv0,  argv1,  argv2,  argv3)
+            client_handle.call_hub("name", "func_test2", argv0,  argv1,  argv2,  argv3);
         }
 
     }

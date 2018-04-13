@@ -47,7 +47,7 @@ def gencaller(module_name, funcs):
                                 count = count + 1
                                 if count < len(i[2]):
                                         code += ", "
-                        code += ")\n        }\n\n"
+                        code += ");\n        }\n\n"
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
                         code += "        cb_" + func_name + " " + func_name + "("
                         count = 0
@@ -67,10 +67,10 @@ def gencaller(module_name, funcs):
                                         code += ", "
                         code += ");\n\n"
                         code += "            var cb_" + func_name + "_obj = new cb_" + func_name + "();\n"
-                        code += "            cb_" + module_name + "_handle.Add(uuid, cb_" + func_name + "_obj);\n\n"
+                        code += "            cb_" + module_name + "_handle.map_" + func_name + ".Add(uuid, cb_" + func_name + "_obj);\n\n"
                         code += "            return cb_" + func_name + "_obj;\n        }\n\n"
-                        cb_code += "        Hashtable map_" + func_name + " = new Hashtable();\n"
-                        cb_code += "        void " + func_name + "_rsp("
+                        cb_code += "        public Hashtable map_" + func_name + " = new Hashtable();\n"
+                        cb_code += "        public void " + func_name + "_rsp("
                         cb_code += "string uuid, "
                         count = 0
                         for item in i[4]:
@@ -89,7 +89,7 @@ def gencaller(module_name, funcs):
                                         cb_code += ", "
                         cb_code += ");\n"
                         cb_code += "        }\n\n"
-                        cb_code += "        void " + func_name + "_err("
+                        cb_code += "        public void " + func_name + "_err("
                         cb_code += "string uuid, "
                         count = 0
                         for item in i[6]:
@@ -127,7 +127,7 @@ def gencaller(module_name, funcs):
                                 count = count + 1
                                 if count < len(i[4]):
                                         cb_func += ", "
-                        cb_func += ");\n            {\n"
+                        cb_func += ");\n            }\n"
                         cb_func += "        }\n\n"
                         cb_func += "        public delegate void " + func_name + "_handle_err();\n"
                         cb_func += "        public event " + func_name + "_handle_err on" + func_name + "_err;\n"
@@ -147,7 +147,7 @@ def gencaller(module_name, funcs):
                                 count = count + 1
                                 if count < len(i[6]):
                                         cb_func += ", "
-                        cb_func += ");\n            {\n"
+                        cb_func += ");\n            }\n"
                         cb_func += "        }\n\n"
                         cb_func += "        void callBack(" + func_name + "_handle_cb cb, " + func_name + "_handle_err err)\n        {\n"
                         cb_func += "            on" + func_name + "_cb += cb;\n"
