@@ -3,22 +3,27 @@
 # genmodule
 
 def genmodule(module_name, funcs):
-        code = "/*this module file is codegen by juggle for js*/\n"
+        code = "/*this imp file is codegen by abelkhan for js*/\n"
 
-        code += "function " + module_name + "_module(){\n"
-        code += "    eventobj.call(this);\n"
-        code += "    Imodule.call(this, \"" + module_name + "\");\n\n"
+        code += "function " + module_name + "(_hub){\n"
+        code += "    var event_cb = require(\"event_cb\");\n"
+        code += "    event_cb.call(this);\n\n"
+        code += "    this.hub_handle = _hub;\n"
+        code += "    _hub.modules.add_module(\"" + module_name + "\", this);\n\n"
 
         for i in funcs:
-                code += "    this." + i[1] + " = function("
+                func_name = i[0]
+
+                code += "    this." + func_name + " = function("
                 count = 0
                 for item in i[2]:
                         code += "argv" + str(count)
                         count = count + 1
                         if count < len(i[2]):
                                 code += ", "
-                code += "){\n"
-                code += "        this.call_event(\"" + i[1] + "\", ["
+                code += ")\n    {\n"
+
+                code += "        this.call_event(\"" + func_name + "\", ["
                 count = 0
                 for item in i[2]:
                         code += "argv" + str(count)
@@ -26,14 +31,9 @@ def genmodule(module_name, funcs):
                         if count < len(i[2]):
                                 code += ", "
                 code += "]);\n"
+
                 code += "    }\n\n"
         
         code += "}\n"
-        code += "(function(){\n"
-        code += "    var Super = function(){};\n"
-        code += "    Super.prototype = Imodule.prototype;\n"
-        code += "    " + module_name + "_module.prototype = new Super();\n"
-        code += "})();\n"
-        code += module_name + "_module.prototype.constructor = " + module_name + "_module;\n\n";
 
         return code

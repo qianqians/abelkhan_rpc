@@ -65,6 +65,24 @@ namespace req
             client_handle.modulemanager.add_module("name", cb_name_handle);
         }
 
+        public name_hubproxy get_hub(string hub_name)
+        {
+            return new name_hubproxy(hub_name, client_handle);
+        }
+
+    }
+
+    public class name_hubproxy
+    {
+        public string hub_name;
+        public client.client client_handle;
+
+        public name_hubproxy(string _hub_name, client.client _client_handle)
+        {
+            hub_name = _hub_name;
+            client_handle = _client_handle;
+        }
+
         cb_func_test func_test(Int64 argv0, ArrayList argv1, Boolean argv2)
         {
             var uuid = System.Guid.NewGuid().ToString();

@@ -14,6 +14,15 @@ def gencaller(module_name, funcs):
         code += "    this.client_handle = _client_handle;\n"
         code += "    this.cb_" + module_name + "_handle = new cb_" + module_name + "();\n"
         code += "    _client_handle.modules.add_module(\"" + module_name + "\", cb_" + module_name + "_handle);\n\n"
+        
+        code += "    this.get_hub = function(hub_name){\n"
+        code += "        return new " + module_name + "_hubproxy(hub_name, _client_handle);\n"
+        code += "    }\n"
+        code += "}\n\n"
+
+        code += "function " + module_name + "_hubproxy (hub_name, _client_handle)\n{\n"
+        code += "    this.hub_name = hub_name;\n"
+        code += "    this.client_handle = _client_handle;\n\n"
 
         for i in funcs:
                 func_name = i[0]

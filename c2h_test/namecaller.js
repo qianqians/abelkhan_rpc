@@ -51,6 +51,16 @@ function name(_client_handle)
     this.cb_name_handle = new cb_name();
     _client_handle.modules.add_module("name", cb_name_handle);
 
+    this.get_hub = function(hub_name){
+        return new name_hubproxy(hub_name, _client_handle);
+    }
+}
+
+function name_hubproxy (hub_name, _client_handle)
+{
+    this.hub_name = hub_name;
+    this.client_handle = _client_handle;
+
     this.func_test = function(argv0, argv1, argv2)
     {
         const uuidv1 = require('uuid/v1');

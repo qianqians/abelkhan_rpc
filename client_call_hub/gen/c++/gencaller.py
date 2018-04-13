@@ -20,8 +20,10 @@ def gencaller(module_name, funcs):
         head_code += "#include <memory>\n\n"
 
         head_code += "#include <module.h>\n\n"
+
+        head_code += "#include <client.h>\n\n"
         
-        head_code +=  "namespace req\n"
+        head_code += "namespace req\n"
         head_code += "{\n"
 
         cb_code_head = "/*req cb code, codegen by abelkhan codegen*/\n"
@@ -46,6 +48,20 @@ def gencaller(module_name, funcs):
         code += "    ~" + module_name + "(){\n"
         code += "    }\n\n"
 
+        code += "    std::shared_ptr<" + module_name + "_hubproxy> get_hub(std::string hub_name) {\n"
+        code += "        renturn std::make_shared<" + module_name + "_hubproxy>(hub_name, client_handle_ptr);\n    }\n"
+        code += "}\n\n"
+
+        code += "class " + module_name + "_hubproxy {\n"
+        code += "public:\n"
+        code += "    std::string hub_name;\n"
+        code += "    std::shared_ptr<client::client> client_handle_ptr;\n\n"
+        code += "public:\n"
+        code += "    " + module_name + "_hubproxy(std::string _hub_name, _client_handle_ptr)\n        {"
+        code += "        hub_name = _hub_name;\n"
+        code += "        client_handle_ptr = _client_handle_ptr;\n"
+        code += "    }\n\n" 
+
         for i in funcs:
                 func_name = i[0]
                 if i[1] == "ntf":
@@ -60,7 +76,7 @@ def gencaller(module_name, funcs):
                         code += "        auto v = std::make_shared<std::vector<boost::any> >();\n"
                         for count in range(len(i[2])):
                             code += "        v->push_back(argv" + str(count) + ");\n"
-                        code += "        client_handle_ptr->call_hub(\"" + module_name + "\", \"" + func_name + "\", v);\n"
+                        code += "        client_handle_ptr->call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "\", v);\n"
                         code += "    }\n\n"
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
                         code += "    std::shared_ptr<cb_" + func_name + "> " + func_name + "("
@@ -77,7 +93,7 @@ def gencaller(module_name, funcs):
                         code += "        v->push_back(uuid);\n"
                         for count in range(len(i[2])):
                             code += "        v->push_back(argv" + str(count) + ");\n"
-                        code += "        client_handle_ptr->call_hub(\"" + module_name + "\", \"" + func_name + "\", v);\n"
+                        code += "        client_handle_ptr->call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "\", v);\n"
                         code += "        auto cb_func_obj = std::make_shared<cb_" + func_name + ">();\n"
                         code += "        cb_" + module_name + "_handle->map_" + func_name + ".insert(std::make_pair(uuid, cb_func_obj));\n"
                         code += "        return cb_func_obj;\n"

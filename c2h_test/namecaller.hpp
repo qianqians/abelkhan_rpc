@@ -15,6 +15,8 @@
 
 #include <module.h>
 
+#include <client.h>
+
 namespace req
 {
 class cb_func_test{
@@ -71,6 +73,24 @@ public:
     ~name(){
     }
 
+    std::shared_ptr<name_hubproxy> get_hub(std::string hub_name) {
+        renturn std::make_shared(hub_name, module_name, client_handle_ptr);
+    }
+}
+
+class name_hubproxy {
+public:
+    std::string hub_name;
+    std::string module_name;
+    std::shared_ptr<client::client> client_handle_ptr;
+
+public:
+    name_hubproxy(std::string _hub_name, _module_name, _client_handle_ptr)
+        {        hub_name = _hub_name;
+        module_name = _module_name;
+        client_handle_ptr = _client_handle_ptr;
+    }
+
     std::shared_ptr<cb_func_test> func_test(int64_t argv0, std::shared_ptr<std::vector<boost::any> > argv1, bool argv2){
         boost::uuids::random_generator g;
         auto uuid = boost::lexical_cast<std::string>(g());
@@ -79,7 +99,7 @@ public:
         v->push_back(argv0);
         v->push_back(argv1);
         v->push_back(argv2);
-        client_handle_ptr->call_hub("name", "func_test", v);
+        client_handle_ptr->call_hub(hub_name, "name", "func_test", v);
         auto cb_func_obj = std::make_shared<cb_func_test>();
         cb_name_handle->map_func_test.insert(std::make_pair(uuid, cb_func_obj));
         return cb_func_obj;
@@ -91,7 +111,7 @@ public:
         v->push_back(argv1);
         v->push_back(argv2);
         v->push_back(argv3);
-        client_handle_ptr->call_hub("name", "func_test2", v);
+        client_handle_ptr->call_hub(hub_name, "name", "func_test2", v);
     }
 
 };

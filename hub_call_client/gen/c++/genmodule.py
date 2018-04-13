@@ -5,49 +5,59 @@
 import tools
 
 def genmodule(module_name, funcs):
-        code = "/*this module file is codegen by juggle for c++*/\n"
-        code += "#ifndef _" + module_name + "_module_h\n"
-        code += "#define _" + module_name + "_module_h\n"
-        code += "#include \"Imodule.h\"\n"
-        code += "#include <memory>\n"
-        code += "#include <boost/signals2.hpp>\n"
-        code += "#include <string>\n\n"
+        head_code = "/*this rsp file is codegen by abelkhan for c++*/\n\n"
+        head_code += "#include <string>\n"
+        head_code += "#include <functional>\n"
+        head_code += "#include <memory>\n\n"
+        
+        head_code += "#include <boost/any.hpp>\n\n"
 
-        code += "namespace module\n{\n"
-        code += "class " + module_name + " : public juggle::Imodule {\n"
-        code += "public:\n"
-        code += "    " + module_name + "(){\n"
-        code += "        module_name = \"" + module_name + "\";\n"
+        head_code += "#include <module.h>\n\n"
+
+        head_code += "#include <hub.h>\n\n"
+
+        head_code += "namespace rsp\n"
+        head_code += "{\n"
+
+        code = "    public class " + module_name + " : public common::imodule {\n    {\n"
+        code += "    public:\n        string module_name;\n"
+        code += "        hub::hub hub_handle;\n\n"
+        code += "    public:\n        " + module_name + "(hub::hub _hub)\n        {\n"
+        code += "            module_name = \"" + module_name + "\";\n"
+        code += "            hub_handle = _hub;\n\n"
+        code += "            hub::hub::modules->add_module(\"" + module_name + "\", this);\n"
+        code += "        }\n\n    public:\n"
+
         for i in funcs:
-                code += "        protcolcall_set.insert(std::make_pair(\"" + i[1] + "\", std::bind(&" + module_name + "::" + i[1] + ", this, std::placeholders::_1)));\n"
+                func_name = i[0]
 
-        code += "    }\n\n"
+                if i[1] != "ntf" and i[1] != "broadcast":
+                        raise "func:" + func_name + " wrong rpc type:" + i[1] + ", must ntf or broadcast"
 
-        code += "    ~" + module_name + "(){\n"
-        code += "    }\n\n"
-
-        for i in funcs:
-                code += "    boost::signals2::signal<void("
+                code += "        boost::signal2::signal<void("
                 count = 0
                 for item in i[2]:
-                        code += tools.gentypetocpp(item)
+                        code += tools.gentypetocpp(item) + " argv" + str(count)
                         count = count + 1
                         if count < len(i[2]):
                                 code += ", "
-                code += ") > sig_" + i[1] + ";\n"
-                code += "    void " + i[1] + "(std::shared_ptr<std::vector<boost::any> > _event){\n"
-                code += "        sig_" + i[1] + "("
+                code += ");  sig" + func_name + ";\n"
+                code += "        void " + func_name + "(std::shared_ptr<std::vector<boost::any> > argvs)\n        {\n"
                 count = 0
                 for item in i[2]:
-                        code += "\n            boost::any_cast<" + tools.gentypetocpp(item) + ">((*_event)[" + str(count) + "])"
-                        count += 1
+                        code += "            auto argv" + str(count) + " = boost::any_cast<" + tools.gentypetocpp(item) + " >(argvs[" + str(count) + "]);\n"
+                        count = count + 1
+                code += "\n            sig" + func_name + "("
+                count = 0
+                for item in i[2]:
+                        code += "argv" + str(count)
+                        count = count + 1
                         if count < len(i[2]):
                                 code += ", "
                 code += ");\n"
-                code += "    }\n\n"
+                code += "        }\n\n"
 
-        code += "};\n\n"
-        code += "}\n\n"
-        code += "#endif\n"
+        code += "    }\n"
+        code += "}\n"
 
-        return code
+        return head_code + code

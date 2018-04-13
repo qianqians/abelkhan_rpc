@@ -28,6 +28,21 @@ def gencaller(module_name, funcs):
         code += "            client_handle = cli;\n"
         code += "            client_handle.modulemanager.add_module(\"" + module_name + "\", cb_" + module_name + "_handle);\n"
         code += "        }\n\n"
+        code += "        public " + module_name + "_hubproxy get_hub(string hub_name)\n"
+        code += "        {\n"
+        code += "            return new " + module_name + "_hubproxy(hub_name, client_handle);\n"
+        code += "        }\n\n"
+        code += "    }\n\n"
+
+        code += "    public class " + module_name + "_hubproxy\n"
+        code += "    {\n"
+        code += "        public string hub_name;\n"
+        code += "        public client.client client_handle;\n\n"
+        code += "        public " + module_name + "_hubproxy(string _hub_name, client.client _client_handle)\n"
+        code += "        {\n"
+        code += "            hub_name = _hub_name;\n"
+        code += "            client_handle = _client_handle;\n"
+        code += "        }\n\n"
 
         for i in funcs:
                 func_name = i[0]
