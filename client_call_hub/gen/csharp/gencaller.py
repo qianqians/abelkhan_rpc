@@ -18,6 +18,8 @@ def gencaller(module_name, funcs):
         cb_code = "    /*this cb code is codegen by abelkhan for c#*/\n"
         cb_code += "    public class cb_" + module_name + " : common.imodule\n    {\n"
 
+        cb_code_Constructor = "        public cb_" + module_name + "()\n        {\n"
+
         code = "    public class " + module_name + "\n"
         code += "    {\n"
         code += "        private client.client client_handle;\n"
@@ -46,6 +48,7 @@ def gencaller(module_name, funcs):
 
         for i in funcs:
                 func_name = i[0]
+
                 if i[1] == "ntf":
                         code += "        void " + func_name + "("
                         count = 0
@@ -64,6 +67,9 @@ def gencaller(module_name, funcs):
                                         code += ", "
                         code += ");\n        }\n\n"
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
+                        cb_code_Constructor += "            events[\"" + func_name + "_rsp\"] = " + func_name + "_rsp;\n"
+                        cb_code_Constructor += "            events[\"" + func_name + "_err\"] = " + func_name + "_err;\n"
+
                         code += "        cb_" + func_name + " " + func_name + "("
                         count = 0
                         for item in i[2]:
@@ -84,16 +90,14 @@ def gencaller(module_name, funcs):
                         code += "            var cb_" + func_name + "_obj = new cb_" + func_name + "();\n"
                         code += "            cb_" + module_name + "_handle.map_" + func_name + ".Add(uuid, cb_" + func_name + "_obj);\n\n"
                         code += "            return cb_" + func_name + "_obj;\n        }\n\n"
-                        cb_code += "        public Hashtable map_" + func_name + " = new Hashtable();\n"
-                        cb_code += "        public void " + func_name + "_rsp("
-                        cb_code += "string uuid, "
+
+                        cb_code += "        public Hashtable map_" + func_name + " = new Hashtable();\n\n"
+                        cb_code += "        public void " + func_name + "_rsp(ArrayList _events)\n        {\n"
+                        cb_code += "            string uuid = (string)_events[0];\n"
                         count = 0
                         for item in i[4]:
-                                cb_code += tools.gentypetocsharp(item) + " argv" + str(count)
+                                cb_code += "            var argv" + str(count) + " = (" + tools.gentypetocsharp(item) + ")_events[" + str(count) + "];\n"
                                 count = count + 1
-                                if count < len(i[4]):
-                                        cb_code += ", "
-                        cb_code += ")\n        {\n"
                         cb_code += "            var rsp = (cb_" + func_name + ")map_" + func_name + "[uuid];\n"
                         cb_code += "            rsp.cb("
                         count = 0
@@ -104,15 +108,12 @@ def gencaller(module_name, funcs):
                                         cb_code += ", "
                         cb_code += ");\n"
                         cb_code += "        }\n\n"
-                        cb_code += "        public void " + func_name + "_err("
-                        cb_code += "string uuid, "
+                        cb_code += "        public void " + func_name + "_err(ArrayList _events)\n        {\n"
+                        cb_code += "            string uuid = (string)_events[0];\n"
                         count = 0
                         for item in i[6]:
-                                cb_code += tools.gentypetocsharp(item) + " argv" + str(count)
+                                cb_code += "            var argv" + str(count) + " = (" + tools.gentypetocsharp(item) + ")_events[" + str(count) + "];\n"
                                 count = count + 1
-                                if count < len(i[6]):
-                                        cb_code += ", "
-                        cb_code += ")\n        {\n"
                         cb_code += "            var rsp = (cb_" + func_name + ")map_" + func_name + "[uuid];\n"
                         cb_code += "            rsp.err("
                         count = 0
@@ -123,10 +124,11 @@ def gencaller(module_name, funcs):
                                         cb_code += ", "
                         cb_code += ");\n"
                         cb_code += "        }\n\n"
+
                         cb_func += "    public class cb_" + func_name + "\n    {\n"
                         cb_func += "        public delegate void " + func_name + "_handle_cb();\n"
                         cb_func += "        public event " + func_name + "_handle_cb on" + func_name + "_cb;\n"
-                        cb_func += "        public void cb(" 
+                        cb_func += "        public void cb("
                         count = 0
                         for item in i[4]:
                                 cb_func += tools.gentypetocsharp(item) + " argv" + str(count)
@@ -146,7 +148,7 @@ def gencaller(module_name, funcs):
                         cb_func += "        }\n\n"
                         cb_func += "        public delegate void " + func_name + "_handle_err();\n"
                         cb_func += "        public event " + func_name + "_handle_err on" + func_name + "_err;\n"
-                        cb_func += "        public void err(" 
+                        cb_func += "        public void err("
                         count = 0
                         for item in i[6]:
                                 cb_func += tools.gentypetocsharp(item) + " argv" + str(count)
@@ -172,6 +174,7 @@ def gencaller(module_name, funcs):
                 else:
                         raise "func:" + func_name + " wrong rpc type:" + i[1] + ", must req or ntf"
 
+        cb_code += cb_code_Constructor + "        }\n"
         cb_code += "    }\n\n"
         code += "    }\n"
         code += "}\n"

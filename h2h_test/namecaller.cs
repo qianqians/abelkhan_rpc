@@ -73,6 +73,7 @@ namespace req
     public class name_hubproxy
     {
         public string hub_name;
+
         public name_hubproxy(string _hub_name)
         {
             hub_name = _hub_name;

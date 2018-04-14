@@ -34,7 +34,7 @@ def gencaller(module_name, funcs):
 
         code += "    public class " + module_name + "_hubproxy\n"
         code += "    {\n"
-        code += "        public string hub_name;\n"
+        code += "        public string hub_name;\n\n"
         code += "        public " + module_name + "_hubproxy(string _hub_name)\n"
         code += "        {\n"
         code += "            hub_name = _hub_name;\n"
@@ -122,7 +122,7 @@ def gencaller(module_name, funcs):
                         cb_func += "    public class cb_" + func_name + "\n    {\n"
                         cb_func += "        public delegate void " + func_name + "_handle_cb();\n"
                         cb_func += "        public event " + func_name + "_handle_cb on" + func_name + "_cb;\n"
-                        cb_func += "        public void cb(" 
+                        cb_func += "        public void cb("
                         count = 0
                         for item in i[4]:
                                 cb_func += tools.gentypetocsharp(item) + " argv" + str(count)
@@ -142,7 +142,7 @@ def gencaller(module_name, funcs):
                         cb_func += "        }\n\n"
                         cb_func += "        public delegate void " + func_name + "_handle_err();\n"
                         cb_func += "        public event " + func_name + "_handle_err on" + func_name + "_err;\n"
-                        cb_func += "        public void err(" 
+                        cb_func += "        public void err("
                         count = 0
                         for item in i[6]:
                                 cb_func += tools.gentypetocsharp(item) + " argv" + str(count)

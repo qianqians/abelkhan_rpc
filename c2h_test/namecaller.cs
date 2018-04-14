@@ -39,18 +39,28 @@ namespace req
     public class cb_name : common.imodule
     {
         public Hashtable map_func_test = new Hashtable();
-        public void func_test_rsp(string uuid, Int64 argv0)
+
+        public void func_test_rsp(ArrayList _events)
         {
+            string uuid = (string)_events[0];
+            var argv0 = (Int64)_events[0];
             var rsp = (cb_func_test)map_func_test[uuid];
             rsp.cb(argv0);
         }
 
-        public void func_test_err(string uuid, Int64 argv0)
+        public void func_test_err(ArrayList _events)
         {
+            string uuid = (string)_events[0];
+            var argv0 = (Int64)_events[0];
             var rsp = (cb_func_test)map_func_test[uuid];
             rsp.err(argv0);
         }
 
+        public cb_name()
+        {
+            events["func_test_rsp"] = func_test_rsp;
+            events["func_test_err"] = func_test_err;
+        }
     }
 
     public class name

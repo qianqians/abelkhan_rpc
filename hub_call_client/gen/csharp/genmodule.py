@@ -17,14 +17,15 @@ def genmodule(module_name, funcs):
 
         code = "    public class " + module_name + " : common.imodule {\n    {\n"
         code += "        public string module_name;\n\n"
-        code += "        public " + module_name + "()\n"
-        code += "        {\n"
-        code += "            module_name = \"" + module_name + "\";\n\n"
-        code += "            hub::hub::modules.add_module(\"" + module_name + "\", this);\n"
-        code += "        }\n\n"
+
+        cb_code_Constructor = "        public " + module_name + "()\n"
+        cb_code_Constructor += "        {\n"
+        cb_code_Constructor += "            module_name = \"" + module_name + "\";\n\n"
 
         for i in funcs:
                 func_name = i[0]
+
+                cb_code_Constructor += "            events[\"" + func_name + "\"] = " + func_name + ";\n"
 
                 if i[1] != "ntf" and i[1] != "multicast" and i[1] != "broadcast":
                         raise "func:" + func_name + " wrong rpc type:" + i[1] + ", must ntf or broadcast"
@@ -58,6 +59,10 @@ def genmodule(module_name, funcs):
                 code += ");\n"
                 code += "        }\n\n"
 
+        cb_code_Constructor += "\n            hub::hub::modules.add_module(\"" + module_name + "\", this);\n"
+        cb_code_Constructor += "        }\n"
+
+        code += cb_code_Constructor
         code += "    }\n"
         code += "}\n"
 

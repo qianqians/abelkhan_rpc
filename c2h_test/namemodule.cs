@@ -40,15 +40,10 @@ namespace rsp
 
         public delegate void func_testhandle(Int64 argv0, ArrayList argv1, Boolean argv2);
         public event func_testhandle onfunc_test;
-        public void func_test(ArrayList _event)
+        public void func_test(string uuid, Int64 argv0, ArrayList argv1, Boolean argv2)
         {
             if(onfunc_test != null)
             {
-                string uuid = (string)_event[0];
-                var argv0 = ((Int64)_event[1]);
-                var argv1 = ((ArrayList)_event[2]);
-                var argv2 = ((Boolean)_event[3]);
-
                 rsp = new rsp_func_test(uuid);
                 onfunc_test( argv1,  argv2,  argv3);
                 rsp = null;
@@ -57,14 +52,10 @@ namespace rsp
 
         public delegate void func_test2handle(Int64 argv0, Int64 argv1, Boolean argv2, Double argv3);
         public event func_test2handle onfunc_test2;
-        public void func_test2(ArrayList _event)
+        public void func_test2(Int64 argv0, Int64 argv1, Boolean argv2, Double argv3)
         {
             if(onfunc_test2 != null)
             {
-                var argv0 = ((Int64)_event[0]);
-                var argv1 = ((Int64)_event[1]);
-                var argv2 = ((Boolean)_event[2]);
-                var argv3 = ((Double)_event[3]);
                 onfunc_test2( argv0,  argv1,  argv2,  argv3);
             }
         }

@@ -12,13 +12,6 @@ namespace imp
     {
         public string module_name;
 
-        public name()
-        {
-            module_name = "name";
-
-            hub::hub::modules.add_module("name", this);
-        }
-
         public delegate void func_test_handle(Int64 argv0, Int64 argv1, Boolean argv2, Double argv3);
         public event func_test_handle onfunc_test;
         void func_test(ArrayList _event)
@@ -68,5 +61,15 @@ namespace imp
             onfunc_test2(argv0, argv1, argv2);
         }
 
+        public name()
+        {
+            module_name = "name";
+
+            events["func_test"] = func_test;
+            events["func_test1"] = func_test1;
+            events["func_test2"] = func_test2;
+
+            hub::hub::modules.add_module("name", this);
+        }
     }
 }

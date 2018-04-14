@@ -37,34 +37,44 @@ def genmodule(module_name, funcs):
                                 code += ", "
                 code += ");\n"
                 code += "        public event " + func_name + "handle on" + func_name + ";\n"
-                code += "        public void " + func_name + "(ArrayList _event)\n        {\n"
-                code += "            if(on" + func_name + " != null)\n            {\n"
-                
+
+                code += "        public void " + func_name + "("
                 if i[1] == "ntf":
                         count = 0
                         for item in i[2]:
-                                code += "                var argv" + str(count) + " = ((" + tools.gentypetocsharp(item) + ")_event[" + str(count) + "]);\n"
+                                code += tools.gentypetocsharp(item) + " argv" + str(count)
                                 count = count + 1
+                                if count < len(i[2]):
+                                    code += ", "
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-                        code += "                var hub_name = (string)_event[0];\n"
-                        code += "                var uuid = (string)_event[1];\n"
-
+                        code += "string hub_name, string uuid, "
                         count = 0
                         for item in i[2]:
-                                code += "                var argv" + str(count) + " = ((" + tools.gentypetocsharp(item) + ")_event[" + str(count+2) + "]);\n"
+                                code += tools.gentypetocsharp(item) + " argv" + str(count)
                                 count = count + 1
+                                if count < len(i[2]):
+                                    code += ", "
+                code += ")\n        {\n"
 
-                        code += "\n                rsp = new rsp_" + func_name + "(hub_name, uuid);\n"
-                        
+                code += "            if(on" + func_name + " == null)\n"
+                code += "            {\n"
+                code += "                return;\n"
+                code += "            }\n\n"
+
+                if i[1] == "ntf":
+                        pass
+                elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
+                        code += "            rsp = new rsp_" + func_name + "(hub_name, uuid);\n"
+
                         rsp_code += "    public class rsp_" + func_name + " : abelkhan.Response\n    {\n"
                         rsp_code += "        public string hub_name;\n"
                         rsp_code += "        public string uuid;\n\n"
                         rsp_code += "        public rsp_" + func_name + "(string _hub_name, string _uuid)\n"
-                        rsp_code += "        {\n"       
+                        rsp_code += "        {\n"
                         rsp_code += "            hub_name = _hub_name;\n"
                         rsp_code += "            uuid = _uuid;\n"
                         rsp_code += "        }\n\n"
-                        
+
                         rsp_code += "        void call("
                         count = 0
                         for item in i[4]:
@@ -82,7 +92,7 @@ def genmodule(module_name, funcs):
                                         rsp_code += ", "
                         rsp_code += ");\n"
                         rsp_code += "        }\n"
-                        
+
                         rsp_code += "        void err("
                         count = 0
                         for item in i[6]:
@@ -104,7 +114,7 @@ def genmodule(module_name, funcs):
                 else:
                         raise "func:%s wrong rpc type:%s must req or ntf" % (func_name, i[1])
 
-                code += "                on" + func_name + "("
+                code += "            on" + func_name + "("
                 count = 0
                 for item in i[2]:
                         code += " argv" + str(count)
@@ -112,15 +122,14 @@ def genmodule(module_name, funcs):
                         if count < len(i[2]):
                                 code += ", "
                 code += ");\n"
-                
+
                 if i[1] == "ntf":
                         pass
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-                        code += "                rsp = null;\n"
+                        code += "            rsp = null;\n"
                 else:
                         raise "func:%s wrong rpc type:%s must req or ntf" % (func_name, i[1])
 
-                code += "            }\n"
                 code += "        }\n\n"
 
         code += "    }\n"

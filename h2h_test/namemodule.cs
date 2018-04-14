@@ -42,34 +42,28 @@ namespace rsp
 
         public delegate void func_testhandle(Int64 argv0, Int64 argv1, Boolean argv2, Double argv3);
         public event func_testhandle onfunc_test;
-        public void func_test(ArrayList _event)
+        public void func_test(Int64 argv0, Int64 argv1, Boolean argv2, Double argv3)
         {
-            if(onfunc_test != null)
+            if(onfunc_test == null)
             {
-                var argv0 = ((Int64)_event[0]);
-                var argv1 = ((Int64)_event[1]);
-                var argv2 = ((Boolean)_event[2]);
-                var argv3 = ((Double)_event[3]);
-                onfunc_test( argv0,  argv1,  argv2,  argv3);
+                return;
             }
+
+            onfunc_test( argv0,  argv1,  argv2,  argv3);
         }
 
         public delegate void func_test1handle(String argv0, ArrayList argv1, Hashtable argv2);
         public event func_test1handle onfunc_test1;
-        public void func_test1(ArrayList _event)
+        public void func_test1(string hub_name, string uuid, String argv0, ArrayList argv1, Hashtable argv2)
         {
-            if(onfunc_test1 != null)
+            if(onfunc_test1 == null)
             {
-                var hub_name = (string)_event[0];
-                var uuid = (string)_event[1];
-                var argv0 = ((String)_event[2]);
-                var argv1 = ((ArrayList)_event[3]);
-                var argv2 = ((Hashtable)_event[4]);
-
-                rsp = new rsp_func_test1(hub_name, uuid);
-                onfunc_test1( argv0,  argv1,  argv2);
-                rsp = null;
+                return;
             }
+
+            rsp = new rsp_func_test1(hub_name, uuid);
+            onfunc_test1( argv0,  argv1,  argv2);
+            rsp = null;
         }
 
     }
