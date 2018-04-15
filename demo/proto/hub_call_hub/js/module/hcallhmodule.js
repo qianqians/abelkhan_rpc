@@ -5,11 +5,11 @@ function rsp_hcallh(_hub, _remote_hub_name, _uuid)
     this.hub_handle = _hub;
     this.remote_hub_name = _remote_hub_name;
     this.uuid = _uuid;
-    this.call()
+    this.call = function()
     {
         _hub.hubs.call_hub(_remote_hub_name, "hcallh", "hcallh_rsp", _uuid);
     }
-    this.err()
+    this.err = function()
     {
         _hub.hubs.call_hub(_remote_hub_name, "hcallh", "hcallh_err", _uuid);
     }

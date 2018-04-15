@@ -36,8 +36,8 @@
 	"hub_name":"hub_server",
 	"ip":"127.0.0.1",
 	"port":1237,
-	"log_level":"debug",
-	"log_file":"test_hub.txt",
+	"log_level":"trace",
+	"log_file":"hub_server.txt",
 	"log_dir":"./log/"
     },
 
@@ -45,8 +45,8 @@
 	"hub_name":"hub_server0",
 	"ip":"127.0.0.1",
 	"port":1238,
-	"log_level":"debug",
-	"log_file":"test_hub.txt",
+	"log_level":"trace",
+	"log_file":"hub_server0.txt",
 	"log_dir":"./log/"
     }
 }

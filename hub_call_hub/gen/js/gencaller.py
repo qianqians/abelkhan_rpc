@@ -65,15 +65,15 @@ def gencaller(module_name, funcs):
 
                         cb_code += "    this.map_" + func_name + " = {};\n"
                         cb_code += "    this." + func_name + "_rsp = function("
-                        cb_code += "uuid, "
+                        cb_code += "uuid"
                         count = 0
                         for item in i[4]:
-                                cb_code += "argv" + str(count)
+                                cb_code += ", argv" + str(count)
                                 count = count + 1
                                 if count < len(i[4]):
                                         cb_code += ", "
                         cb_code += ")\n    {\n"
-                        cb_code += "        var rsp = map_" + func_name + "[uuid];\n"
+                        cb_code += "        var rsp = this.map_" + func_name + "[uuid];\n"
                         cb_code += "        rsp.cb("
                         count = 0
                         for item in i[4]:
@@ -85,15 +85,15 @@ def gencaller(module_name, funcs):
                         cb_code += "    }\n\n"
 
                         cb_code += "    this." + func_name + "_err = function("
-                        cb_code += "uuid, "
+                        cb_code += "uuid"
                         count = 0
                         for item in i[6]:
-                                cb_code += "argv" + str(count)
+                                cb_code += ", argv" + str(count)
                                 count = count + 1
                                 if count < len(i[6]):
                                         cb_code += ", "
                         cb_code += ")\n    {\n"
-                        cb_code += "        var rsp = map_" + func_name + "[uuid];\n"
+                        cb_code += "        var rsp = this.map_" + func_name + "[uuid];\n"
                         cb_code += "        rsp.err("
                         count = 0
                         for item in i[6]:
@@ -146,8 +146,8 @@ def gencaller(module_name, funcs):
                         cb_func += "    }\n\n"
 
                         cb_func += "    this.callBack = function(cb, err)\n    {\n"
-                        cb_func += "        this.event_" + func_name + "_handle_cb += cb;\n"
-                        cb_func += "        this.event_" + func_name + "_handle_err += err;\n"
+                        cb_func += "        this.event_" + func_name + "_handle_cb = cb;\n"
+                        cb_func += "        this.event_" + func_name + "_handle_err = err;\n"
                         cb_func += "    }\n"
                         cb_func += "}\n\n"
                 else:

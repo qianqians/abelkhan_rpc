@@ -6,6 +6,7 @@ var _hub = new hub.hub(args);
 var _h2hmodule =new h2hmodule.hcallh(_hub);
 
 _h2hmodule.add_event_listen("hcallh", function(){
+    console.log("client login");
     _hub.modules.rsp.call();
 });
 

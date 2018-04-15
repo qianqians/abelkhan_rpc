@@ -22,8 +22,8 @@ function cb_hcallh()
 
     this.callBack = function(cb, err)
     {
-        this.event_hcallh_handle_cb += cb;
-        this.event_hcallh_handle_err += err;
+        this.event_hcallh_handle_cb = cb;
+        this.event_hcallh_handle_err = err;
     }
 }
 
@@ -31,15 +31,15 @@ function cb_hcallh()
 function cb_hcallh_handle()
 {
     this.map_hcallh = {};
-    this.hcallh_rsp = function(uuid, )
+    this.hcallh_rsp = function(uuid)
     {
-        var rsp = map_hcallh[uuid];
+        var rsp = this.map_hcallh[uuid];
         rsp.cb();
     }
 
-    this.hcallh_err = function(uuid, )
+    this.hcallh_err = function(uuid)
     {
-        var rsp = map_hcallh[uuid];
+        var rsp = this.map_hcallh[uuid];
         rsp.err();
     }
 
