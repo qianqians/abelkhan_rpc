@@ -58,13 +58,11 @@ def gencaller(module_name, funcs):
                                 if count < len(i[2]):
                                         code += ", "
                         code += ")\n        {\n"
-                        code += "            client_handle.call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "\","
+                        code += "            client_handle.call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "\""
                         count = 0
                         for item in i[2]:
-                                code += " argv" + str(count)
+                                code += ", argv" + str(count)
                                 count = count + 1
-                                if count < len(i[2]):
-                                        code += ", "
                         code += ");\n        }\n\n"
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
                         cb_code_Constructor += "            events[\"" + func_name + "_rsp\"] = " + func_name + "_rsp;\n"
@@ -79,13 +77,11 @@ def gencaller(module_name, funcs):
                                         code += ", "
                         code += ")\n        {\n"
                         code += "            var uuid = System.Guid.NewGuid().ToString();\n"
-                        code += "            client_handle.call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "\", uuid,"
+                        code += "            client_handle.call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "\", uuid"
                         count = 0
                         for item in i[2]:
-                                code += " argv" + str(count)
+                                code += ", argv" + str(count)
                                 count = count + 1
-                                if count < len(i[2]):
-                                        code += ", "
                         code += ");\n\n"
                         code += "            var cb_" + func_name + "_obj = new cb_" + func_name + "();\n"
                         code += "            cb_" + module_name + "_handle.map_" + func_name + ".Add(uuid, cb_" + func_name + "_obj);\n\n"

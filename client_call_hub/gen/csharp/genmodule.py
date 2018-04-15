@@ -57,13 +57,11 @@ def genmodule(module_name, funcs):
                                         code += ", "
                         code += ");\n"
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-                        code += "        public void " + func_name + "(string uuid, "
+                        code += "        public void " + func_name + "(string uuid"
                         count = 0
                         for item in i[2]:
-                                code += tools.gentypetocsharp(item) + " argv" + str(count)
+                                code += ", " + tools.gentypetocsharp(item) + " argv" + str(count)
                                 count = count + 1
-                                if count < len(i[2]):
-                                        code += ", "
                         code += ")\n        {\n"
                         code += "            if(on" + func_name + " != null)\n            {\n"
                         code += "                rsp = new rsp_" + func_name + "(uuid);\n"
@@ -91,13 +89,11 @@ def genmodule(module_name, funcs):
                                 if count < len(i[4]):
                                         rsp_code += ", "
                         rsp_code += ")\n        {\n"
-                        rsp_code += "            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, \"" + module_name + "\", \"" + func_name + "_rsp\", uuid, "
+                        rsp_code += "            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, \"" + module_name + "\", \"" + func_name + "_rsp\", uuid"
                         count = 0
                         for item in i[4]:
-                                rsp_code += "argv" + str(count)
+                                rsp_code += ", argv" + str(count)
                                 count = count + 1
-                                if count < len(i[4]):
-                                        rsp_code += ", "
                         rsp_code += ");\n"
                         rsp_code += "        }\n"
 
@@ -109,13 +105,11 @@ def genmodule(module_name, funcs):
                                 if count < len(i[6]):
                                         rsp_code += ", "
                         rsp_code += ")\n        {\n"
-                        rsp_code += "            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, \"" + module_name + "\", \"" + func_name + "_err\", uuid, "
+                        rsp_code += "            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, \"" + module_name + "\", \"" + func_name + "_err\", uuid"
                         count = 0
                         for item in i[6]:
-                                rsp_code += "argv" + str(count)
+                                rsp_code += ", argv" + str(count)
                                 count = count + 1
-                                if count < len(i[6]):
-                                        rsp_code += ", "
                         rsp_code += ");\n"
                         rsp_code += "        }\n"
                         rsp_code += "    }\n\n"

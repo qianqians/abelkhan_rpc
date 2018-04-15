@@ -5,11 +5,10 @@
 def genmodule(module_name, funcs):
         code = "/*this imp file is codegen by abelkhan for js*/\n"
 
-        code += "function " + module_name + "(_hub){\n"
-        code += "    var event_cb = require(\"event_cb\");\n"
+        code += "function " + module_name + "(_client){\n"
         code += "    event_cb.call(this);\n\n"
-        code += "    this.hub_handle = _hub;\n"
-        code += "    _hub.modules.add_module(\"" + module_name + "\", this);\n\n"
+        code += "    this.client_handle = _client;\n"
+        code += "    _client.modules.add_module(\"" + module_name + "\", this);\n\n"
 
         for i in funcs:
                 func_name = i[0]
@@ -33,7 +32,7 @@ def genmodule(module_name, funcs):
                 code += "]);\n"
 
                 code += "    }\n\n"
-        
+
         code += "}\n"
 
         return code

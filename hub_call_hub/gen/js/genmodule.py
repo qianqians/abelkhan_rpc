@@ -9,7 +9,7 @@ def genmodule(module_name, funcs):
 
         code = "function " + module_name + "(_hub)\n{\n"
         code += "    var event_cb = require(\"event_cb\");\n"
-        code += "    event_cb.call(this);\n\n"
+        code += "    event_cb.event_cb.call(this);\n\n"
         code += "    this.module_name = \"" + module_name + "\";\n"
         code += "    this.hub_handle = _hub;\n"
         code += "    _hub.modules.add_module(\"" + module_name + "\", this);\n\n"
@@ -36,17 +36,15 @@ def genmodule(module_name, funcs):
                                         code += ", "
                         code += "]);\n"
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-                        code += "    this." + func_name + " = function(remote_hub_name, uuid, "
+                        code += "    this." + func_name + " = function(remote_hub_name, uuid"
                         count = 0
                         for item in i[2]:
-                                code += "argv" + str(count)
+                                code += ", argv" + str(count)
                                 count = count + 1
-                                if count < len(i[2]):
-                                        code += ", "
                         code += ")\n    {\n"
 
                         code += "        _hub.modules.rsp = new rsp_" + func_name + "(_hub, remote_hub_name, uuid);\n"
-                        
+
                         code += "        this.call_event(\"" + func_name + "\", ["
                         count = 0
                         for item in i[2]:
@@ -60,7 +58,7 @@ def genmodule(module_name, funcs):
                         rsp_code += "    this.hub_handle = _hub;\n"
                         rsp_code += "    this.remote_hub_name = _remote_hub_name;\n"
                         rsp_code += "    this.uuid = _uuid;\n"
-                        
+
                         rsp_code += "    this.call("
                         count = 0
                         for item in i[4]:
@@ -69,16 +67,14 @@ def genmodule(module_name, funcs):
                                 if count < len(i[4]):
                                         rsp_code += ", "
                         rsp_code += ")\n    {\n"
-                        rsp_code += "        _hub.hubs.call_hub(_remote_hub_name, \"" + module_name + "\", \"" + func_name + "_rsp\", _uuid, "
+                        rsp_code += "        _hub.hubs.call_hub(_remote_hub_name, \"" + module_name + "\", \"" + func_name + "_rsp\", _uuid"
                         count = 0
                         for item in i[4]:
-                                rsp_code += "argv" + str(count)
+                                rsp_code += ", argv" + str(count)
                                 count = count + 1
-                                if count < len(i[4]):
-                                        rsp_code += ", "
                         rsp_code += ");\n"
                         rsp_code += "    }\n"
-                        
+
                         rsp_code += "    this.err("
                         count = 0
                         for item in i[6]:
@@ -87,19 +83,17 @@ def genmodule(module_name, funcs):
                                 if count < len(i[6]):
                                         rsp_code += ", "
                         rsp_code += ")\n    {\n"
-                        rsp_code += "        _hub.hubs.call_hub(_remote_hub_name, \"" + module_name + "\", \"" + func_name + "_err\", _uuid, "
+                        rsp_code += "        _hub.hubs.call_hub(_remote_hub_name, \"" + module_name + "\", \"" + func_name + "_err\", _uuid"
                         count = 0
                         for item in i[6]:
-                                rsp_code += "argv" + str(count)
+                                rsp_code += ", argv" + str(count)
                                 count = count + 1
-                                if count < len(i[6]):
-                                        rsp_code += ", "
                         rsp_code += ");\n"
                         rsp_code += "    }\n"
                         rsp_code += "}\n\n"
                 else:
                         raise "func:%s wrong rpc type:%s must req or ntf" % (func_name, i[1])
-                
+
                 if i[1] == "ntf":
                         pass
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
@@ -110,5 +104,6 @@ def genmodule(module_name, funcs):
                 code += "    }\n\n"
 
         code += "}\n"
+        code += "module.exports." + module_name + " = " + module_name + ";\n\n"
 
         return head_code + rsp_code + code

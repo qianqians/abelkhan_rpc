@@ -1,4 +1,0 @@
-module name(client_call_hub){
-   func_test req(int, array , bool) rsp(int) err(int);
-   func_test2 ntf(int, int, bool, float);
-}
