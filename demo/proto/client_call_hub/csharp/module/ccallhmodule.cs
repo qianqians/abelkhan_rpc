@@ -23,7 +23,7 @@ namespace rsp
         }
         void err()
         {
-            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, "ccallh", "ccallh_err", uuid, );
+            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, "ccallh", "ccallh_err", uuid);
         }
     }
 
@@ -40,7 +40,7 @@ namespace rsp
 
         public delegate void ccallhhandle();
         public event ccallhhandle onccallh;
-        public void ccallh(string uuid, )
+        public void ccallh(string uuid)
         {
             if(onccallh != null)
             {
