@@ -1,3 +1,0 @@
-module hcallc(hub_call_client){
-		hcallc ntf(string);
-}

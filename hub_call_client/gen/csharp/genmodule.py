@@ -18,7 +18,7 @@ def genmodule(module_name, funcs):
         code = "    public class " + module_name + " : common.imodule {\n    {\n"
         code += "        public string module_name;\n\n"
 
-        cb_code_Constructor = "        public " + module_name + "()\n"
+        cb_code_Constructor = "        public " + module_name + "(client.client _client)\n"
         cb_code_Constructor += "        {\n"
         cb_code_Constructor += "            module_name = \"" + module_name + "\";\n\n"
 
@@ -59,7 +59,7 @@ def genmodule(module_name, funcs):
                 code += ");\n"
                 code += "        }\n\n"
 
-        cb_code_Constructor += "\n            hub::hub::modules.add_module(\"" + module_name + "\", this);\n"
+        cb_code_Constructor += "\n            _client.modulemanager.add_module(\"" + module_name + "\", this);\n"
         cb_code_Constructor += "        }\n"
 
         code += cb_code_Constructor

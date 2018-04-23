@@ -1,3 +1,0 @@
-module hcallh(hub_call_hub){
-		hcallh req() rsp() err();
-}

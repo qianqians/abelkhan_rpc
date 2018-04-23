@@ -8,21 +8,22 @@ def gencaller(module_name, funcs):
         head_code = "/*this req file is codegen by abelkhan codegen for c++*/\n\n"
         head_code += "#ifndef _" + module_name + "_req_h\n"
         head_code += "#define _" + module_name + "_req_h\n\n"
-        
+
         head_code += "#include <string>\n"
-        head_code += "#include <functional>\n\n"
-        
+        head_code += "#include <functional>\n"
+        head_code += "#include <memory>\n\n"
+
         head_code += "#include <boost/any.hpp>\n"
         head_code += "#include <boost/uuid/uuid.hpp>\n"
         head_code += "#include <boost/uuid/uuid_generators.hpp>\n"
         head_code += "#include <boost/uuid/uuid_io.hpp>\n"
         head_code += "#include <boost/lexical_cast.hpp>\n"
-        head_code += "#include <memory>\n\n"
+        head_code += "#include <boost/signals2.hpp>\n\n"
 
         head_code += "#include <module.h>\n\n"
 
         head_code += "#include <client.h>\n\n"
-        
+
         head_code += "namespace req\n"
         head_code += "{\n"
 
@@ -33,8 +34,9 @@ def gencaller(module_name, funcs):
 
         cb_code = ""
         cb_func_code = ""
-        
-        code = "class " + module_name + " {\n"
+
+        code = "class " + module_name + "_hubproxy;\n"
+        code += "class " + module_name + " {\n"
         code += "private:\n"
         code += "    std::shared_ptr<client::client> client_handle_ptr;\n"
         code += "    std::shared_ptr<cb_" + module_name + "> cb_" + module_name + "_handle;\n\n"
@@ -49,18 +51,20 @@ def gencaller(module_name, funcs):
         code += "    }\n\n"
 
         code += "    std::shared_ptr<" + module_name + "_hubproxy> get_hub(std::string hub_name) {\n"
-        code += "        renturn std::make_shared<" + module_name + "_hubproxy>(hub_name, client_handle_ptr);\n    }\n"
-        code += "}\n\n"
+        code += "        return std::make_shared<" + module_name + "_hubproxy>(hub_name, client_handle_ptr, cb_" + module_name + "_handle);\n    }\n"
+        code += "};\n\n"
 
         code += "class " + module_name + "_hubproxy {\n"
         code += "public:\n"
         code += "    std::string hub_name;\n"
+        code += "    std::shared_ptr<cb_" + module_name + "> cb_" + module_name + "_handle;\n"
         code += "    std::shared_ptr<client::client> client_handle_ptr;\n\n"
         code += "public:\n"
-        code += "    " + module_name + "_hubproxy(std::string _hub_name, std::shared_ptr<client::client> _client_handle_ptr){\n"
+        code += "    " + module_name + "_hubproxy(std::string _hub_name, std::shared_ptr<client::client> _client_handle_ptr, std::shared_ptr<cb_" + module_name + "> _cb_" + module_name + "){\n"
         code += "        hub_name = _hub_name;\n"
+        code += "        cb_" + module_name + "_handle = _cb_" + module_name + ";\n"
         code += "        client_handle_ptr = _client_handle_ptr;\n"
-        code += "    }\n\n" 
+        code += "    }\n\n"
 
         for i in funcs:
                 func_name = i[0]
@@ -79,7 +83,7 @@ def gencaller(module_name, funcs):
                         code += "        client_handle_ptr->call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "\", v);\n"
                         code += "    }\n\n"
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-                        code += "    std::shared_ptr<cb_" + func_name + "> " + func_name + "("
+                        code += "    std::shared_ptr<cb_" + func_name + "_func> " + func_name + "("
                         count = 0
                         for item in i[2]:
                                 code += tools.gentypetocpp(item) + " argv" + str(count)
@@ -94,14 +98,14 @@ def gencaller(module_name, funcs):
                         for count in range(len(i[2])):
                             code += "        v->push_back(argv" + str(count) + ");\n"
                         code += "        client_handle_ptr->call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "\", v);\n"
-                        code += "        auto cb_func_obj = std::make_shared<cb_" + func_name + ">();\n"
+                        code += "        auto cb_func_obj = std::make_shared<cb_" + func_name + "_func>();\n"
                         code += "        cb_" + module_name + "_handle->map_" + func_name + ".insert(std::make_pair(uuid, cb_func_obj));\n"
                         code += "        return cb_func_obj;\n"
                         code += "    }\n\n"
-                        
-                        cb_func_code += "class cb_" + func_name + "{\n"
+
+                        cb_func_code += "class cb_" + func_name + "_func{\n"
                         cb_func_code += "public:\n"
-                        cb_func_code += "    boost::signal2::signal<void("
+                        cb_func_code += "    boost::signals2::signal<void("
                         count = 0
                         for item in i[4]:
                                 cb_func_code += tools.gentypetocpp(item)
@@ -126,7 +130,7 @@ def gencaller(module_name, funcs):
                                         cb_func_code += ", "
                         cb_func_code += ");\n"
                         cb_func_code += "    }\n\n"
-                        cb_func_code += "    boost::signal2::signal<void("
+                        cb_func_code += "    boost::signals2::signal<void("
                         count = 0
                         for item in i[6]:
                                 cb_func_code += tools.gentypetocpp(item)
@@ -158,29 +162,30 @@ def gencaller(module_name, funcs):
                                 count = count + 1
                                 if count < len(i[4]):
                                         cb_func_code += ", "
-                        cb_func_code += ")> cb, std::function<"
+                        cb_func_code += ")> cb, std::function<void("
                         ount = 0
                         for item in i[6]:
                                 cb_func_code += tools.gentypetocpp(item)
                                 count = count + 1
                                 if count < len(i[6]):
                                         cb_func_code += ", "
-                        cb_func_code += "> err){\n"
+                        cb_func_code += ")> err){\n"
                         cb_func_code += "        sig" + func_name + "cb.connect(cb);\n"
                         cb_func_code += "        sig" + func_name + "err.connect(err);\n"
                         cb_func_code += "    }\n\n"
-                        cb_func_code += "}\n"
+                        cb_func_code += "};\n"
 
-                        cb_code_head += "        reg_cb(\"" + func_name + "_rsp\", std::bind(&cb_" + module_name + "::" + func_name + "_rsp), this, std::placeholders::_1);\n"
+                        cb_code_head += "        reg_cb(\"" + func_name + "_rsp\", std::bind(&cb_" + module_name + "::" + func_name + "_rsp, this, std::placeholders::_1));\n"
+                        cb_code_head += "        reg_cb(\"" + func_name + "_err\", std::bind(&cb_" + module_name + "::" + func_name + "_err, this, std::placeholders::_1));\n"
 
-                        cb_code += "    std::map<std::string, std::shared_ptr<cb_" + func_name + "> > map_" + func_name + ";\n"
+                        cb_code += "    std::map<std::string, std::shared_ptr<cb_" + func_name + "_func> > map_" + func_name + ";\n"
                         cb_code += "    void " + func_name + "_rsp(std::shared_ptr<std::vector<boost::any> > argvs){\n"
-                        cb_code += "        auto cb_uuid = boost::any_cast<std::string>(argvs[0]);\n"
+                        cb_code += "        auto cb_uuid = boost::any_cast<std::string>((*argvs)[0]);\n"
                         count = 1
                         for item in i[4]:
-                                cb_code += "        auto argv" + str(count) + " = boost::any_cast<" + tools.gentypetocpp(item) + ">(argvs[" + str(count) + "]);\n"
+                                cb_code += "        auto argv" + str(count) + " = boost::any_cast<" + tools.gentypetocpp(item) + ">((*argvs)[" + str(count) + "]);\n"
                                 count = count + 1
-                        cb_code += "        std::shared_ptr<cb_" + func_name + "> func_cb = map_" + func_name + "[cb_uuid];\n"
+                        cb_code += "        std::shared_ptr<cb_" + func_name + "_func> func_cb = map_" + func_name + "[cb_uuid];\n"
                         cb_code += "        func_cb->cb("
                         count = 1
                         for item in i[4]:
@@ -191,12 +196,12 @@ def gencaller(module_name, funcs):
                         cb_code += ");\n"
                         cb_code += "    }\n"
                         cb_code += "    void " + func_name + "_err(std::shared_ptr<std::vector<boost::any> > argvs){\n"
-                        cb_code += "        auto cb_uuid = boost::any_cast<std::string>(argvs[0]);\n"
+                        cb_code += "        auto cb_uuid = boost::any_cast<std::string>((*argvs)[0]);\n"
                         count = 1
                         for item in i[6]:
-                                cb_code += "        auto argv" + str(count) + " = boost::any_cast<" + tools.gentypetocpp(item) + ">(argvs[" + str(count) + "]);\n"
+                                cb_code += "        auto argv" + str(count) + " = boost::any_cast<" + tools.gentypetocpp(item) + ">((*argvs)[" + str(count) + "]);\n"
                                 count = count + 1
-                        cb_code += "        std::shared_ptr<cb_" + func_name + "> func_cb = map_" + func_name + "[cb_uuid];\n"
+                        cb_code += "        std::shared_ptr<cb_" + func_name + "_func> func_cb = map_" + func_name + "[cb_uuid];\n"
                         cb_code += "        func_cb->err("
                         count = 1
                         for item in i[6]:
@@ -209,10 +214,10 @@ def gencaller(module_name, funcs):
                 else:
                         raise "func:" + func_name + " wrong rpc type:" + i[1] + ", must req or ntf"
 
-        cb_code_head += "    }\n"
+        cb_code_head += "    }\n\n"
         code += "};\n\n"
         cb_code += "};\n\n"
-        
+
         code += "}\n\n"
         code += "#endif\n"
 
