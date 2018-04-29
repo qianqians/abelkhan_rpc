@@ -16,10 +16,10 @@ def genmodule(module_name, funcs):
 
         rsp_code = ""
 
-        code = "    public class " + module_name + " : abelkhan.Module\n    {\n"
+        code = "    public class " + module_name + "_module : abelkhan.Module\n    {\n"
         code += "        public string module_name;\n"
         code += "        public hub.hub hub_handle;\n"
-        code += "        public " + module_name + "(hub.hub _hub)\n        {\n"
+        code += "        public " + module_name + "_module(hub.hub _hub)\n        {\n"
         code += "            module_name = \"" + module_name + "\";\n"
         code += "            hub_handle = _hub;\n"
         code += "            hub.hub.modules.add_module(\"" + module_name + "\", this);\n"

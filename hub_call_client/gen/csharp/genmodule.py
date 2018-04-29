@@ -15,17 +15,17 @@ def genmodule(module_name, funcs):
         head_code += "namespace imp\n"
         head_code += "{\n"
 
-        code = "    public class " + module_name + " : common.imodule {\n    {\n"
+        code = "    public class " + module_name + "_module : common.imodule\n    {\n"
         code += "        public string module_name;\n\n"
 
-        cb_code_Constructor = "        public " + module_name + "(client.client _client)\n"
+        cb_code_Constructor = "        public " + module_name + "_module(client.client _client)\n"
         cb_code_Constructor += "        {\n"
         cb_code_Constructor += "            module_name = \"" + module_name + "\";\n\n"
 
         for i in funcs:
                 func_name = i[0]
 
-                cb_code_Constructor += "            events[\"" + func_name + "\"] = " + func_name + ";\n"
+                cb_code_Constructor += "            reg_event(\"" + func_name + "\", " + func_name + ");\n"
 
                 if i[1] != "ntf" and i[1] != "multicast" and i[1] != "broadcast":
                         raise "func:" + func_name + " wrong rpc type:" + i[1] + ", must ntf or broadcast"
@@ -43,7 +43,7 @@ def genmodule(module_name, funcs):
                 code += "        {\n"
                 code += "            if (on" + func_name + " == null)\n"
                 code += "            {\n"
-                code += "                reutrn;\n"
+                code += "                return;\n"
                 code += "            }\n\n"
                 count = 0
                 for item in i[2]:

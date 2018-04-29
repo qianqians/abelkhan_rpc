@@ -32,25 +32,27 @@ def gencaller(module_name, funcs):
         code += "        }\n\n"
         code += "        public " + module_name + "_hubproxy get_hub(string hub_name)\n"
         code += "        {\n"
-        code += "            return new " + module_name + "_hubproxy(hub_name, client_handle);\n"
+        code += "            return new " + module_name + "_hubproxy(hub_name, client_handle, cb_" + module_name + "_handle);\n"
         code += "        }\n\n"
         code += "    }\n\n"
 
         code += "    public class " + module_name + "_hubproxy\n"
         code += "    {\n"
         code += "        public string hub_name;\n"
+        code += "        public cb_" + module_name + " cb_" + module_name + "_handle;\n"
         code += "        public client.client client_handle;\n\n"
-        code += "        public " + module_name + "_hubproxy(string _hub_name, client.client _client_handle)\n"
+        code += "        public " + module_name + "_hubproxy(string _hub_name, client.client _client_handle, cb_" + module_name + " _cb_" + module_name + "_handle)\n"
         code += "        {\n"
         code += "            hub_name = _hub_name;\n"
         code += "            client_handle = _client_handle;\n"
+        code += "            cb_" + module_name + "_handle = _cb_" + module_name + "_handle;\n"
         code += "        }\n\n"
 
         for i in funcs:
                 func_name = i[0]
 
                 if i[1] == "ntf":
-                        code += "        void " + func_name + "("
+                        code += "        public void " + func_name + "("
                         count = 0
                         for item in i[2]:
                                 code += tools.gentypetocsharp(item) + " argv" + str(count)
@@ -65,10 +67,10 @@ def gencaller(module_name, funcs):
                                 count = count + 1
                         code += ");\n        }\n\n"
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-                        cb_code_Constructor += "            events[\"" + func_name + "_rsp\"] = " + func_name + "_rsp;\n"
-                        cb_code_Constructor += "            events[\"" + func_name + "_err\"] = " + func_name + "_err;\n"
+                        cb_code_Constructor += "            reg_event(\"" + func_name + "_rsp\", " + func_name + "_rsp);\n"
+                        cb_code_Constructor += "            reg_event(\"" + func_name + "_err\", " + func_name + "_err);\n"
 
-                        code += "        cb_" + func_name + " " + func_name + "("
+                        code += "        public cb_" + func_name + "_func " + func_name + "("
                         count = 0
                         for item in i[2]:
                                 code += tools.gentypetocsharp(item) + " argv" + str(count)
@@ -83,7 +85,7 @@ def gencaller(module_name, funcs):
                                 code += ", argv" + str(count)
                                 count = count + 1
                         code += ");\n\n"
-                        code += "            var cb_" + func_name + "_obj = new cb_" + func_name + "();\n"
+                        code += "            var cb_" + func_name + "_obj = new cb_" + func_name + "_func();\n"
                         code += "            cb_" + module_name + "_handle.map_" + func_name + ".Add(uuid, cb_" + func_name + "_obj);\n\n"
                         code += "            return cb_" + func_name + "_obj;\n        }\n\n"
 
@@ -92,9 +94,9 @@ def gencaller(module_name, funcs):
                         cb_code += "            string uuid = (string)_events[0];\n"
                         count = 0
                         for item in i[4]:
-                                cb_code += "            var argv" + str(count) + " = (" + tools.gentypetocsharp(item) + ")_events[" + str(count) + "];\n"
+                                cb_code += "            var argv" + str(count) + " = (" + tools.gentypetocsharp(item) + ")_events[" + str(count+1) + "];\n"
                                 count = count + 1
-                        cb_code += "            var rsp = (cb_" + func_name + ")map_" + func_name + "[uuid];\n"
+                        cb_code += "            var rsp = (cb_" + func_name + "_func)map_" + func_name + "[uuid];\n"
                         cb_code += "            rsp.cb("
                         count = 0
                         for item in i[4]:
@@ -110,7 +112,7 @@ def gencaller(module_name, funcs):
                         for item in i[6]:
                                 cb_code += "            var argv" + str(count) + " = (" + tools.gentypetocsharp(item) + ")_events[" + str(count) + "];\n"
                                 count = count + 1
-                        cb_code += "            var rsp = (cb_" + func_name + ")map_" + func_name + "[uuid];\n"
+                        cb_code += "            var rsp = (cb_" + func_name + "_func)map_" + func_name + "[uuid];\n"
                         cb_code += "            rsp.err("
                         count = 0
                         for item in i[6]:
@@ -121,8 +123,15 @@ def gencaller(module_name, funcs):
                         cb_code += ");\n"
                         cb_code += "        }\n\n"
 
-                        cb_func += "    public class cb_" + func_name + "\n    {\n"
-                        cb_func += "        public delegate void " + func_name + "_handle_cb();\n"
+                        cb_func += "    public class cb_" + func_name + "_func\n    {\n"
+                        cb_func += "        public delegate void " + func_name + "_handle_cb("
+                        count = 0
+                        for item in i[4]:
+                                cb_func += tools.gentypetocsharp(item) + " argv" + str(count)
+                                count = count + 1
+                                if count < len(i[4]):
+                                        cb_func += ", "
+                        cb_func += ");\n"
                         cb_func += "        public event " + func_name + "_handle_cb on" + func_name + "_cb;\n"
                         cb_func += "        public void cb("
                         count = 0
@@ -142,7 +151,14 @@ def gencaller(module_name, funcs):
                                         cb_func += ", "
                         cb_func += ");\n            }\n"
                         cb_func += "        }\n\n"
-                        cb_func += "        public delegate void " + func_name + "_handle_err();\n"
+                        cb_func += "        public delegate void " + func_name + "_handle_err("
+                        count = 0
+                        for item in i[6]:
+                                cb_func += tools.gentypetocsharp(item) + " argv" + str(count)
+                                count = count + 1
+                                if count < len(i[6]):
+                                        cb_func += ", "
+                        cb_func += ");\n"
                         cb_func += "        public event " + func_name + "_handle_err on" + func_name + "_err;\n"
                         cb_func += "        public void err("
                         count = 0
@@ -162,7 +178,7 @@ def gencaller(module_name, funcs):
                                         cb_func += ", "
                         cb_func += ");\n            }\n"
                         cb_func += "        }\n\n"
-                        cb_func += "        void callBack(" + func_name + "_handle_cb cb, " + func_name + "_handle_err err)\n        {\n"
+                        cb_func += "        public void callBack(" + func_name + "_handle_cb cb, " + func_name + "_handle_err err)\n        {\n"
                         cb_func += "            on" + func_name + "_cb += cb;\n"
                         cb_func += "            on" + func_name + "_err += err;\n"
                         cb_func += "        }\n\n"
