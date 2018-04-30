@@ -16,10 +16,10 @@ def genmodule(module_name, funcs):
 
         rsp_code = ""
 
-        code = "    public class " + module_name + " : abelkhan.Module\n    {\n"
+        code = "    public class " + module_name + "_module : abelkhan.Module\n    {\n"
         code += "        public string module_name;\n"
         code += "        public hub.hub hub_handle;\n"
-        code += "        public " + module_name + "(hub.hub _hub)\n        {\n"
+        code += "        public " + module_name + "_module(hub.hub _hub)\n        {\n"
         code += "            module_name = \"" + module_name + "\";\n"
         code += "            hub_handle = _hub;\n"
         code += "            hub.hub.modules.add_module(\"" + module_name + "\", this);\n"
@@ -47,13 +47,11 @@ def genmodule(module_name, funcs):
                                 if count < len(i[2]):
                                     code += ", "
                 elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-                        code += "string hub_name, string uuid, "
+                        code += "string hub_name, string uuid"
                         count = 0
                         for item in i[2]:
-                                code += tools.gentypetocsharp(item) + " argv" + str(count)
+                                code += ", " + tools.gentypetocsharp(item) + " argv" + str(count)
                                 count = count + 1
-                                if count < len(i[2]):
-                                    code += ", "
                 code += ")\n        {\n"
 
                 code += "            if(on" + func_name + " == null)\n"
@@ -75,7 +73,7 @@ def genmodule(module_name, funcs):
                         rsp_code += "            uuid = _uuid;\n"
                         rsp_code += "        }\n\n"
 
-                        rsp_code += "        void call("
+                        rsp_code += "        public void call("
                         count = 0
                         for item in i[4]:
                                 rsp_code += tools.gentypetocsharp(item) + " argv" + str(count)
@@ -83,17 +81,15 @@ def genmodule(module_name, funcs):
                                 if count < len(i[4]):
                                         rsp_code += ", "
                         rsp_code += ")\n        {\n"
-                        rsp_code += "            hub.hub.hubs.call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "_rsp\", uuid, "
+                        rsp_code += "            hub.hub.hubs.call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "_rsp\", uuid"
                         count = 0
                         for item in i[4]:
-                                rsp_code += "argv" + str(count)
+                                rsp_code += ", argv" + str(count)
                                 count = count + 1
-                                if count < len(i[4]):
-                                        rsp_code += ", "
                         rsp_code += ");\n"
                         rsp_code += "        }\n"
 
-                        rsp_code += "        void err("
+                        rsp_code += "        public void err("
                         count = 0
                         for item in i[6]:
                                 rsp_code += tools.gentypetocsharp(item) + " argv" + str(count)
@@ -101,13 +97,11 @@ def genmodule(module_name, funcs):
                                 if count < len(i[6]):
                                         rsp_code += ", "
                         rsp_code += ")\n        {\n"
-                        rsp_code += "            hub.hub.hubs.call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "_err\", uuid, "
+                        rsp_code += "            hub.hub.hubs.call_hub(hub_name, \"" + module_name + "\", \"" + func_name + "_err\", uuid"
                         count = 0
                         for item in i[6]:
-                                rsp_code += "argv" + str(count)
+                                rsp_code += ", argv" + str(count)
                                 count = count + 1
-                                if count < len(i[6]):
-                                        rsp_code += ", "
                         rsp_code += ");\n"
                         rsp_code += "        }\n"
                         rsp_code += "    }\n\n"

@@ -81,7 +81,7 @@ def genmodule(module_name, funcs):
                         rsp_code += "            uuid = _uuid;\n"
                         rsp_code += "        }\n\n"
 
-                        rsp_code += "        void call("
+                        rsp_code += "        public void call("
                         count = 0
                         for item in i[4]:
                                 rsp_code += tools.gentypetocsharp(item) + " argv" + str(count)
@@ -97,7 +97,7 @@ def genmodule(module_name, funcs):
                         rsp_code += ");\n"
                         rsp_code += "        }\n"
 
-                        rsp_code += "        void err("
+                        rsp_code += "        public void err("
                         count = 0
                         for item in i[6]:
                                 rsp_code += tools.gentypetocsharp(item) + " argv" + str(count)

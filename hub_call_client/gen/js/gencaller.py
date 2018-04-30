@@ -32,29 +32,35 @@ def gencaller(module_name, funcs):
                 if i[1] != "ntf" and i[1] != "multicast" and i[1] != "broadcast":
                         raise "func:" + func_name + " wrong rpc type:" + i[1] + ", must ntf or broadcast"
 
+                argvs1 = ""
+                count = 0
+                for item in i[2]:
+                        argvs1 += "argv" + str(count)
+                        count = count + 1
+                        if count < len(i[2]):
+                            argvs1 += ", "
+
                 argvs = ""
                 count = 0
                 for item in i[2]:
-                        argvs += "argv" + str(count)
+                        argvs += ", argv" + str(count)
                         count = count + 1
-                        if count < len(i[2]):
-                                argvs += ", "
 
                 tmp_code = "    this." + func_name + " = function("
-                tmp_code += argvs
+                tmp_code += argvs1
                 tmp_code += "){\n"
 
                 if i[1] == "ntf":
                         cp_code += tmp_code
-                        cp_code += "        hub_ptr.gates.call_client(uuid, \"" + module_name + "\", \"" + func_name + "\", " + argvs + ");\n"
+                        cp_code += "        hub_ptr.gates.call_client(uuid, \"" + module_name + "\", \"" + func_name + "\"" + argvs + ");\n"
                         cp_code += "    }\n"
                 elif i[1] == "multicast":
                         cm_code += tmp_code
-                        cm_code += "        hub_ptr.gates.call_group_client(uuids, \"" + module_name + "\", \"" + func_name + "\", " + argvs + ");\n"
+                        cm_code += "        hub_ptr.gates.call_group_client(uuids, \"" + module_name + "\", \"" + func_name + "\"" + argvs + ");\n"
                         cm_code += "    }\n"
                 elif i[1] == "broadcast":
                         cb_code += tmp_code
-                        cb_code += "        hub_ptr.gates.call_global_client(\"" + module_name + "\", \"" + func_name + "\", " + argvs + ");\n"
+                        cb_code += "        hub_ptr.gates.call_global_client(\"" + module_name + "\", \"" + func_name + "\"" + argvs + ");\n"
                         cb_code += "    }\n"
 
         cp_code += "}\n"

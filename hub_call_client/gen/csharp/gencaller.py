@@ -19,15 +19,15 @@ def gencaller(module_name, funcs):
         code += "        }\n\n"
         code += "        public " + module_name + "_cliproxy get_client(string uuid)\n"
         code += "        {\n"
-        code += "            return new" + module_name + "_cliproxy(uuid);\n"
+        code += "            return new " + module_name + "_cliproxy(uuid);\n"
         code += "        }\n\n"
-        code += "        public " + module_name + "_cliproxy_multi get_multicast(Arraylist uuids)\n"
+        code += "        public " + module_name + "_cliproxy_multi get_multicast(ArrayList uuids)\n"
         code += "        {\n"
-        code += "            return new" + module_name + "_cliproxy_multi(uuids);\n"
+        code += "            return new " + module_name + "_cliproxy_multi(uuids);\n"
         code += "        }\n\n"
         code += "        public " + module_name + "_broadcast get_broadcast()\n"
         code += "        {\n"
-        code += "            return new" + module_name + "_broadcast(uuid);\n"
+        code += "            return new " + module_name + "_broadcast();\n"
         code += "        }\n\n"
         code += "    }\n\n"
 
@@ -41,8 +41,8 @@ def gencaller(module_name, funcs):
 
         cm_code = "    public class " + module_name + "_cliproxy_multi\n"
         cm_code += "    {\n"
-        cm_code += "        private Arraylist uuids;\n\n"
-        cm_code += "        public " + module_name + "_cliproxy_multi(Arraylist _uuids)\n"
+        cm_code += "        private ArrayList uuids;\n\n"
+        cm_code += "        public " + module_name + "_cliproxy_multi(ArrayList _uuids)\n"
         cm_code += "        {\n"
         cm_code += "            uuids = _uuids;\n"
         cm_code += "        }\n\n"
@@ -51,7 +51,6 @@ def gencaller(module_name, funcs):
         cb_code += "    {\n"
         cb_code += "        public " + module_name + "_broadcast()\n"
         cb_code += "        {\n"
-        cb_code += "            uuids = _uuids;\n"
         cb_code += "        }\n\n"
 
         for i in funcs:
@@ -69,21 +68,24 @@ def gencaller(module_name, funcs):
                                 tmp_code += ", "
                 tmp_code += ")\n"
                 tmp_code += "        {\n"
-                tmp_code += "            ArrayList _argv = new ArrayList();\n"
-                for n in range(len(i[2])):
-                        tmp_code += "            _argv.Add(argv" + str(n) + ");\n"
-                
+
+                argvs = ""
+                count = 0
+                for item in i[2]:
+                        argvs += ", argv" + str(count)
+                        count = count + 1
+
                 if i[1] == "ntf":
                         cp_code += tmp_code
-                        cp_code += "            hub.hub.gates.call_client(uuid, \"" + module_name + "\", \"" + func_name + "\", _argv);\n"
+                        cp_code += "            hub.hub.gates.call_client(uuid, \"" + module_name + "\", \"" + func_name + "\"" + argvs + ");\n"
                         cp_code += "        }\n\n"
                 elif i[1] == "multicast":
                         cm_code += tmp_code
-                        cm_code += "            hub.hub.gates.call_group_client(uuids, \"" + module_name + "\", \"" + func_name + "\", _argv);\n"
+                        cm_code += "            hub.hub.gates.call_group_client(uuids, \"" + module_name + "\", \"" + func_name + "\"" + argvs + ");\n"
                         cm_code += "        }\n\n"
                 elif i[1] == "broadcast":
                         cb_code += tmp_code
-                        cb_code += "            hub.hub.gates.call_global_client(\"" + module_name + "\", \"" + func_name + "\", _argv);\n"
+                        cb_code += "            hub.hub.gates.call_global_client(\"" + module_name + "\", \"" + func_name + "\"" + argvs + ");\n"
                         cb_code += "        }\n\n"
 
         cp_code += "    }\n\n"
