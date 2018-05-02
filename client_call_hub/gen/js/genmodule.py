@@ -43,7 +43,7 @@ def genmodule(module_name, funcs):
                                 count = count + 1
                         code += ")\n    {\n"
 
-                        code += "        _hub.modules.rsp = new rsp_" + func_name + "(_hub, uuid);\n"
+                        code += "        _hub.modules.rsp = new rsp_" + func_name + "(_hub, uuid, _hub.gates.current_client_uuid);\n"
 
                         code += "        this.call_event(\"" + func_name + "\", ["
                         count = 0
@@ -54,9 +54,10 @@ def genmodule(module_name, funcs):
                                         code += ", "
                         code += "]);\n"
 
-                        rsp_code += "function rsp_" + func_name + "(_hub, _uuid)\n{\n"
+                        rsp_code += "function rsp_" + func_name + "(_hub, _uuid, _client_uuid)\n{\n"
                         rsp_code += "    this.hub_handle = _hub;\n"
                         rsp_code += "    this.uuid = _uuid;\n"
+                        rsp_code += "    this.client_uuid = _client_uuid;\n"
 
                         rsp_code += "    this.rsp = function("
                         count = 0
@@ -66,7 +67,7 @@ def genmodule(module_name, funcs):
                                 if count < len(i[4]):
                                         rsp_code += ", "
                         rsp_code += ")\n    {\n"
-                        rsp_code += "        _hub.gates.call_client(_hub.gates.current_client_uuid, \"" + module_name + "\", \"" + func_name + "_rsp\", _uuid"
+                        rsp_code += "        _hub.gates.call_client(_client_uuid, \"" + module_name + "\", \"" + func_name + "_rsp\", _uuid"
                         count = 0
                         for item in i[4]:
                                 rsp_code += ", argv" + str(count)
@@ -82,7 +83,7 @@ def genmodule(module_name, funcs):
                                 if count < len(i[6]):
                                         rsp_code += ", "
                         rsp_code += ")\n    {\n"
-                        rsp_code += "        _hub.gates.call_client(_hub.gates.current_client_uuid, \"" + module_name + "\", \"" + func_name + "_err\", _uuid"
+                        rsp_code += "        _hub.gates.call_client(_client_uuid, \"" + module_name + "\", \"" + func_name + "_err\", _uuid"
                         count = 0
                         for item in i[6]:
                                 rsp_code += ", argv" + str(count)
