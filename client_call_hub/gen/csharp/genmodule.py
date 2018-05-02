@@ -64,7 +64,7 @@ def genmodule(module_name, funcs):
                                 count = count + 1
                         code += ")\n        {\n"
                         code += "            if(on" + func_name + " != null)\n            {\n"
-                        code += "                rsp = new rsp_" + func_name + "(uuid);\n"
+                        code += "                rsp = new rsp_" + func_name + "(uuid, hub.hub.gates.current_client_uuid);\n"
                         code += "                on" + func_name + "("
                         count = 0
                         for item in i[2]:
@@ -75,10 +75,12 @@ def genmodule(module_name, funcs):
                         code += ");\n"
 
                         rsp_code += "    public class rsp_" + func_name + " : abelkhan.Response\n    {\n"
-                        rsp_code += "        public string uuid;\n\n"
-                        rsp_code += "        public rsp_" + func_name + "(string _uuid)\n"
+                        rsp_code += "        public string uuid;\n"
+                        rsp_code += "        public string client_uuid;\n\n"
+                        rsp_code += "        public rsp_" + func_name + "(string _uuid, string _client_uuid)\n"
                         rsp_code += "        {\n"
                         rsp_code += "            uuid = _uuid;\n"
+                        rsp_code += "            client_uuid = _client_uuid;\n"
                         rsp_code += "        }\n\n"
 
                         rsp_code += "        public void call("
@@ -89,7 +91,7 @@ def genmodule(module_name, funcs):
                                 if count < len(i[4]):
                                         rsp_code += ", "
                         rsp_code += ")\n        {\n"
-                        rsp_code += "            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, \"" + module_name + "\", \"" + func_name + "_rsp\", uuid"
+                        rsp_code += "            hub.hub.gates.call_client(client_uuid, \"" + module_name + "\", \"" + func_name + "_rsp\", uuid"
                         count = 0
                         for item in i[4]:
                                 rsp_code += ", argv" + str(count)
@@ -105,7 +107,7 @@ def genmodule(module_name, funcs):
                                 if count < len(i[6]):
                                         rsp_code += ", "
                         rsp_code += ")\n        {\n"
-                        rsp_code += "            hub.hub.gates.call_client(hub.hub.gates.current_client_uuid, \"" + module_name + "\", \"" + func_name + "_err\", uuid"
+                        rsp_code += "            hub.hub.gates.call_client(client_uuid, \"" + module_name + "\", \"" + func_name + "_err\", uuid"
                         count = 0
                         for item in i[6]:
                                 rsp_code += ", argv" + str(count)
