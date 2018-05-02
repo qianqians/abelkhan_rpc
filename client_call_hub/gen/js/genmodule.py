@@ -58,7 +58,7 @@ def genmodule(module_name, funcs):
                         rsp_code += "    this.hub_handle = _hub;\n"
                         rsp_code += "    this.uuid = _uuid;\n"
 
-                        rsp_code += "    this.call = function("
+                        rsp_code += "    this.rsp = function("
                         count = 0
                         for item in i[4]:
                                 rsp_code += "argv" + str(count)
