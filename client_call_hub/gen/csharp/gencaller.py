@@ -110,7 +110,7 @@ def gencaller(module_name, funcs):
                         cb_code += "            string uuid = (string)_events[0];\n"
                         count = 0
                         for item in i[6]:
-                                cb_code += "            var argv" + str(count) + " = (" + tools.gentypetocsharp(item) + ")_events[" + str(count) + "];\n"
+                                cb_code += "            var argv" + str(count) + " = (" + tools.gentypetocsharp(item) + ")_events[" + str(count+1) + "];\n"
                                 count = count + 1
                         cb_code += "            var rsp = (cb_" + func_name + "_func)map_" + func_name + "[uuid];\n"
                         cb_code += "            rsp.err("
