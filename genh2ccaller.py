@@ -10,7 +10,8 @@ import jparser
 
 def gen(inputdir, lang, outputdir):
         defmodulelist = []
-
+        defenumlist = []
+        
         syspath = "./hub_call_client/gen/"
         c_suffix = ""
         if lang == 'csharp':
@@ -69,6 +70,6 @@ def gen(inputdir, lang, outputdir):
                         file = open(outputdir + '//' + enum_name + 'enum.' + c_suffix, 'w')
                         file.write(enum_code)
                         file.close()
-                        
+
 if __name__ == '__main__':
         gen(sys.argv[1], sys.argv[2], sys.argv[3])

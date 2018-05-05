@@ -10,6 +10,7 @@ import jparser
 
 def gen(inputdir, lang, outputdir):
         defmodulelist = []
+        defenumlist = []
 
         syspath = "./client_call_hub/gen/"
         h_suffix = ""
@@ -66,7 +67,7 @@ def gen(inputdir, lang, outputdir):
                         defmodulelist.append(enum_name)
 
                         enum_code = genenum.genenum(enum_name, enums)
-                        file = open(outputdir + '//' + enum_name + 'enum.' + c_suffix, 'w')
+                        file = open(outputdir + '//' + enum_name + 'enum.' + h_suffix, 'w')
                         file.write(enum_code)
                         file.close()
 
