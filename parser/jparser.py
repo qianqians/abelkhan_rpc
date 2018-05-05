@@ -19,6 +19,6 @@ def parser(str):
 
     machine.syntaxanalysis(deletenote.deletenote(str))
 
-    return machine.getmodule()
+    return machine.getmodule(), machine.getenum()
 
 #print(parser(text))
