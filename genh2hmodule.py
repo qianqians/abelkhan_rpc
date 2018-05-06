@@ -27,10 +27,12 @@ def gen(inputdir, lang, outputdir):
         syspath = "./enum/"
         if lang == 'csharp':
                 syspath += "csharp/"
+                sys.path.append(syspath)
+                import genenum
         if lang == 'js':
                 syspath += "js/"
-        sys.path.append(syspath)
-        import genenum
+                sys.path.append(syspath)
+                import genenum_node as genenum
         sys.path.remove(syspath)
 
         if not os.path.isdir(outputdir):
