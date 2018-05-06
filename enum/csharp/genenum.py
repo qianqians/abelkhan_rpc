@@ -5,7 +5,6 @@
 def genenum(enum_name, enums):
         code = "/*this enum code is codegen by abelkhan codegen for c#*/\n\n"
 
-        code += "namespace " + enum_name + "\n{\n"
         code += "    public enum " + enum_name + "\n    {\n"
         count = 0;
         for key, value in enums.items():
@@ -14,6 +13,5 @@ def genenum(enum_name, enums):
             if count < len(enums):
                 code += ",\n"
         code += "    \n}\n"
-        code += "}\n"
 
         return code

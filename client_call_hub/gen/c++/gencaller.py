@@ -1,32 +1,10 @@
 # 2018-4-8
 # build by qianqians
 # gencaller
-
+import genenum
 import tools
 
-def gencaller(module_name, funcs):
-        head_code = "/*this req file is codegen by abelkhan codegen for c++*/\n\n"
-        head_code += "#ifndef _" + module_name + "_req_h\n"
-        head_code += "#define _" + module_name + "_req_h\n\n"
-
-        head_code += "#include <string>\n"
-        head_code += "#include <functional>\n"
-        head_code += "#include <memory>\n\n"
-
-        head_code += "#include <boost/any.hpp>\n"
-        head_code += "#include <boost/uuid/uuid.hpp>\n"
-        head_code += "#include <boost/uuid/uuid_generators.hpp>\n"
-        head_code += "#include <boost/uuid/uuid_io.hpp>\n"
-        head_code += "#include <boost/lexical_cast.hpp>\n"
-        head_code += "#include <boost/signals2.hpp>\n\n"
-
-        head_code += "#include <module.h>\n\n"
-
-        head_code += "#include <client.h>\n\n"
-
-        head_code += "namespace req\n"
-        head_code += "{\n"
-
+def gen_module_caller(module_name, funcs):
         cb_code_head = "/*req cb code, codegen by abelkhan codegen*/\n"
         cb_code_head += "class cb_" + module_name + " : public common::imodule {\n"
         cb_code_head += "public:\n"
@@ -218,7 +196,40 @@ def gencaller(module_name, funcs):
         code += "};\n\n"
         cb_code += "};\n\n"
 
-        code += "}\n\n"
-        code += "#endif\n"
+        return cb_func_code + cb_code_head + cb_code + code
 
-        return head_code + cb_func_code + cb_code_head + cb_code + code
+def gencaller(file_name, modules, enums):
+        head_code = "/*this req file is codegen by abelkhan codegen for c++*/\n\n"
+        head_code += "#ifndef _" + file_name + "_req_h\n"
+        head_code += "#define _" + file_name + "_req_h\n\n"
+
+        head_code += "#include <string>\n"
+        head_code += "#include <functional>\n"
+        head_code += "#include <memory>\n\n"
+
+        head_code += "#include <boost/any.hpp>\n"
+        head_code += "#include <boost/uuid/uuid.hpp>\n"
+        head_code += "#include <boost/uuid/uuid_generators.hpp>\n"
+        head_code += "#include <boost/uuid/uuid_io.hpp>\n"
+        head_code += "#include <boost/lexical_cast.hpp>\n"
+        head_code += "#include <boost/signals2.hpp>\n\n"
+
+        head_code += "#include <module.h>\n\n"
+
+        head_code += "#include <client.h>\n\n"
+
+        namespace_head_code = "namespace abelkhan_code_gen\n"
+        namespace_head_code += "{\n"
+
+        namespace_end_code = "}\n\n"
+        code_end = "#endif\n"
+
+        module_code = ""
+        for module_name, funcs in modules.items():
+                module_code += gen_module_caller(module_name, funcs)
+
+        enum_code = ""
+        for enum_name, enum_key_values in enums.items():
+                enum_code += genenum.genenum(enum_name, enum_key_values)
+
+        return head_code + namespace_head_code + enum_code + module_code + namespace_end_code + code_end

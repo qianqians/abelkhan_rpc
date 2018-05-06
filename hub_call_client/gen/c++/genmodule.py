@@ -2,24 +2,10 @@
 # build by qianqians
 # genmodule
 
+import genenum
 import tools
 
-def genmodule(module_name, funcs):
-        head_code = "/*this rsp file is codegen by abelkhan for c++*/\n\n"
-        head_code += "#include <string>\n"
-        head_code += "#include <functional>\n"
-        head_code += "#include <memory>\n\n"
-
-        head_code += "#include <boost/any.hpp>\n"
-        head_code += "#include <boost/signals2.hpp>\n\n"
-
-        head_code += "#include <module.h>\n\n"
-
-        head_code += "#include <client.h>\n\n"
-
-        head_code += "namespace rsp\n"
-        head_code += "{\n"
-
+def gen_module_module(module_name, funcs):
         code = "    class " + module_name + "_module : public common::imodule, public std::enable_shared_from_this<" + module_name + "_module> \n    {\n"
         code += "    public:\n        std::string module_name;\n"
         code += "    public:\n        " + module_name + "_module()\n        {\n        }\n\n"
@@ -65,6 +51,34 @@ def genmodule(module_name, funcs):
                 code += "        }\n\n"
 
         code += "    };\n"
-        code += "}\n"
 
-        return head_code + code
+        return code
+
+def genmodule(file_name,modules, enums):
+        head_code = "/*this rsp file is codegen by abelkhan for c++*/\n\n"
+        head_code += "#include <string>\n"
+        head_code += "#include <functional>\n"
+        head_code += "#include <memory>\n\n"
+
+        head_code += "#include <boost/any.hpp>\n"
+        head_code += "#include <boost/signals2.hpp>\n\n"
+
+        head_code += "#include <module.h>\n\n"
+
+        head_code += "#include <client.h>\n\n"
+
+        head_code += "namespace abelkhan_gen_code\n"
+        head_code += "{\n"
+
+        end_code = "}\n"
+
+        module_code = ""
+        for module_name, funcs in modules.items():
+                module_code += gen_module_module(module_name, funcs)
+
+        enum_code = ""
+        for enum_name, enum_key_value in enums.items():
+                enum_code += genenum.genenum(enum_name, enum_key_value)
+
+
+        return head_code + enum_code + module_code + end_code

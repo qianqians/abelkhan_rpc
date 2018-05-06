@@ -2,10 +2,10 @@
 # build by qianqians
 # genmodule
 
-def genmodule(module_name, funcs):
-        code = "/*this imp file is codegen by abelkhan for js*/\n"
+import genenum_browser as genenum
 
-        code += "function " + module_name + "(_client){\n"
+def gen_module_module(module_name, funcs):
+        code = "function " + module_name + "(_client){\n"
         code += "    event_cb.call(this);\n\n"
         code += "    this.client_handle = _client;\n"
         code += "    _client.modules.add_module(\"" + module_name + "\", this);\n\n"
@@ -36,3 +36,16 @@ def genmodule(module_name, funcs):
         code += "}\n"
 
         return code
+
+def genmodule(file_name, modules, enums):
+        code = "/*this imp file is codegen by abelkhan for js*/\n"
+
+        module_code = ""
+        for module_name, funcs in modules.items():
+                module_code += gen_module_module(module_name, funcs)
+
+        enum_code = ""
+        for enum_name, enum_key_values in enums.items():
+                enum_code += genenum.genenum(enum_name, enum_key_values)
+
+        return code + enum_code + module_code

@@ -2,18 +2,10 @@
 # build by qianqians
 # genmodule
 
+import genenum
 import tools
 
-def genmodule(module_name, funcs):
-        head_code = "/*this rsp file is codegen by abelkhan for c#*/\n\n"
-        head_code += "using System;\n"
-        head_code += "using System.Collections;\n"
-        head_code += "using System.Collections.Generic;\n\n"
-
-        head_code += "using abelkhan;\n\n"
-
-        head_code += "namespace rsp\n{\n"
-
+def gen_module_module(module_name, funcs):
         rsp_code = ""
 
         code = "    public class " + module_name + "_module : abelkhan.Module\n    {\n"
@@ -129,6 +121,27 @@ def genmodule(module_name, funcs):
                 code += "        }\n\n"
 
         code += "    }\n"
-        code += "}\n"
 
-        return head_code + rsp_code + code
+        return rsp_code + code
+
+def genmodule(file_name, modules, enums):
+        head_code = "/*this rsp file is codegen by abelkhan for c#*/\n\n"
+        head_code += "using System;\n"
+        head_code += "using System.Collections;\n"
+        head_code += "using System.Collections.Generic;\n\n"
+
+        head_code += "using abelkhan;\n\n"
+
+        head_code += "namespace abelkhan_code_gen\n{\n"
+
+        end_code = "}\n"
+
+        module_code = ""
+        for module_name, funcs in modules.items():
+                module_code += gen_module_module(module_name, funcs)
+
+        enum_code = ""
+        for enum_name, enum_key_values in enums.items():
+                enum_code += genenum.genenum(enum_name, enum_key_values)
+
+        return head_code + enum_code + module_code + end_code

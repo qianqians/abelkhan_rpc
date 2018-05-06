@@ -2,10 +2,10 @@
 # build by qianqians
 # genmodule
 
-def gencaller(module_name, funcs):
-        code = "/*this ntf file is codegen by ablekhan for js*/\n\n"
+import genenum_node as genenum
 
-        code += "function " + module_name + "(hub_ptr){\n"
+def gen_module_caller(module_name, funcs):
+        code = "function " + module_name + "(hub_ptr){\n"
         code += "    this.get_client = function(uuid){\n"
         code += "        return new " + module_name + "_cliproxy(uuid, hub_ptr);\n"
         code += "    }\n"
@@ -70,4 +70,17 @@ def gencaller(module_name, funcs):
         cb_code += "}\n"
         code += "module.exports." + module_name + "_broadcast = " + module_name + "_broadcast;\n\n"
 
-        return code + cp_code + cm_code + cb_code
+        return cp_code + cm_code + cb_code + code
+
+def gencaller(file_name, modules, enums):
+        code = "/*this ntf file is codegen by ablekhan for js*/\n\n"
+
+        module_code = ""
+        for module_name, funcs in modules.items():
+                module_code += gen_module_caller(module_name, funcs)
+
+        enum_code = ""
+        for enum_name, enum_key_values in enums.items():
+                enum_code += genenum.genenum(enum_name, enum_key_values)
+
+        return code + enum_code + module_code

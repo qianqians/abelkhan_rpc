@@ -4,13 +4,15 @@
 
 import sys
 sys.path.append("./parser")
+sys.path.append("./enum/c++")
+sys.path.append("./enum/csharp")
+sys.path.append("./enum/js")
 
 import os
 import jparser
 
 def gen(inputdir, lang, outputdir):
         defmodulelist = []
-        defenumlist = []
 
         syspath = "./hub_call_hub/gen/"
         h_suffix = ""
@@ -22,17 +24,6 @@ def gen(inputdir, lang, outputdir):
                 h_suffix = "js"
         sys.path.append(syspath)
         import genmodule
-        sys.path.remove(syspath)
-
-        syspath = "./enum/"
-        if lang == 'csharp':
-                syspath += "csharp/"
-                sys.path.append(syspath)
-                import genenum
-        if lang == 'js':
-                syspath += "js/"
-                sys.path.append(syspath)
-                import genenum_node as genenum
         sys.path.remove(syspath)
 
         if not os.path.isdir(outputdir):
@@ -50,6 +41,7 @@ def gen(inputdir, lang, outputdir):
                 module, enum = jparser.parser(genfilestr)
                 print module
                 print enum
+                modules = {}
                 for module_name, module_info in module.items():
                         if module_name in defmodulelist:
                                 raise 'redefined module %s' % module_name
@@ -59,19 +51,16 @@ def gen(inputdir, lang, outputdir):
 
                         defmodulelist.append(module_name)
 
-                        modulecode = genmodule.genmodule(module_name, module_info["method"])
-                        file = open(outputdir + '//' + module_name + 'module.' + h_suffix, 'w')
-                        file.write(modulecode)
-                        file.close
+                        modules[module_name] = module_info["method"]
                 for enum_name, enums in enum.items():
-                        if enum_name in defenumlist:
+                        if enum_name in defmodulelist:
                                 raise 'redefined enum %s' % enum_name
                         defmodulelist.append(enum_name)
 
-                        enum_code = genenum.genenum(enum_name, enums)
-                        file = open(outputdir + '//' + enum_name + 'enum.' + h_suffix, 'w')
-                        file.write(enum_code)
-                        file.close()
+                modulecode = genmodule.genmodule(fname, modules, enum)
+                file = open(outputdir + '//' + fname + '_module.' + h_suffix, 'w')
+                file.write(modulecode)
+                file.close()
 
 if __name__ == '__main__':
         gen(sys.argv[1], sys.argv[2], sys.argv[3])

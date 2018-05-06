@@ -2,19 +2,10 @@
 # build by qianqians
 # genmodule
 
+import genenum
 import tools
 
-def genmodule(module_name, funcs):
-        head_code = "/*this imp file is codegen by abelkhan for c#*/\n\n"
-        head_code += "using System;\n"
-        head_code += "using System.Collections;\n"
-        head_code += "using System.Collections.Generic;\n\n"
-
-        head_code += "using common;\n\n"
-
-        head_code += "namespace imp\n"
-        head_code += "{\n"
-
+def gen_module_module(module_name, funcs):
         code = "    public class " + module_name + "_module : common.imodule\n    {\n"
         code += "        public string module_name;\n\n"
 
@@ -64,6 +55,28 @@ def genmodule(module_name, funcs):
 
         code += cb_code_Constructor
         code += "    }\n"
-        code += "}\n"
 
-        return head_code + code
+        return code
+
+def genmodule(module_name, funcs):
+        head_code = "/*this imp file is codegen by abelkhan for c#*/\n\n"
+        head_code += "using System;\n"
+        head_code += "using System.Collections;\n"
+        head_code += "using System.Collections.Generic;\n\n"
+
+        head_code += "using common;\n\n"
+
+        head_code += "namespace imp\n"
+        head_code += "{\n"
+
+        end_code = "}\n"
+
+        module_code = ""
+        for module_name, funcs in modules.items():
+                module_code += gen_module_module(module_name, funcs)
+
+        enum_code = ""
+        for enum_name, enum_key_values in enums.items():
+                enum_code += genenum.genenum(enum_name, enum_key_values)
+
+        return head_code + enum_code + module_code + end_code

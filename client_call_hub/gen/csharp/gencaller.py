@@ -2,17 +2,10 @@
 # build by qianqians
 # gencaller
 
+import genenum
 import tools
 
-def gencaller(module_name, funcs):
-        head_code = "/*this req file is codegen by abelkhan for c#*/\n"
-        head_code += "using System;\n"
-        head_code += "using System.Collections;\n"
-        head_code += "using System.IO;\n\n"
-
-        head_code += "namespace req\n"
-        head_code += "{\n"
-
+def gen_module_caller(module_name, funcs):
         cb_func = ""
 
         cb_code = "    /*this cb code is codegen by abelkhan for c#*/\n"
@@ -189,6 +182,26 @@ def gencaller(module_name, funcs):
         cb_code += cb_code_Constructor + "        }\n"
         cb_code += "    }\n\n"
         code += "    }\n"
-        code += "}\n"
 
-        return head_code + cb_func + cb_code + code
+        return cb_func + cb_code + code
+
+def gencaller(file_name, modules, enums):
+        head_code = "/*this req file is codegen by abelkhan for c#*/\n"
+        head_code += "using System;\n"
+        head_code += "using System.Collections;\n"
+        head_code += "using System.IO;\n\n"
+
+        head_code += "namespace abelkhan_code_gen\n"
+        head_code += "{\n"
+
+        end_code = "}\n"
+
+        module_code = ""
+        for module_name, funcs in modules.items():
+                module_code += gen_module_caller(module_name, funcs)
+
+        enum_code = ""
+        for enum_name, enum_key_values in enums.items():
+                enum_code += genenum.genenum(enum_name, enum_key_values)
+
+        return head_code + enum_code + module_code + end_code
