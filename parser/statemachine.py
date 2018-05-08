@@ -143,7 +143,7 @@ class enum(object):
     def __init__(self):
         self.keyworld = ''
         self.name = ''
-        self.enum = {}
+        self.enum = []
         self.machine = None
 
     def push(self, ch):
@@ -152,7 +152,7 @@ class enum(object):
 
         if self.machine is not None:
             if self.machine.push(ch):
-                self.enum[self.machine.key] = self.machine.value
+                self.enum.append((self.machine.key, self.machine.value))
                 self.machine.clear()
         else:
             if ch == '{':

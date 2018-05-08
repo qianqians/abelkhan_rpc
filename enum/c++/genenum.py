@@ -7,7 +7,7 @@ def genenum(enum_name, enums):
 
         code += "enum " + enum_name + "\n{\n"
         count = 0;
-        for key, value in enums.items():
+        for key, value in enums:
             code += "    " + key + " = " + str(value)
             count = count + 1
             if count < len(enums):
