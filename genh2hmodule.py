@@ -4,9 +4,6 @@
 
 import sys
 sys.path.append("./parser")
-sys.path.append("./enum/c++")
-sys.path.append("./enum/csharp")
-sys.path.append("./enum/js")
 
 import os
 import jparser
@@ -17,9 +14,11 @@ def gen(inputdir, lang, outputdir):
         syspath = "./hub_call_hub/gen/"
         h_suffix = ""
         if lang == 'csharp':
+                sys.path.append("./enum/csharp")
                 syspath += "csharp/"
                 h_suffix = "cs"
         if lang == 'js':
+                sys.path.append("./enum/js")
                 syspath += "js/"
                 h_suffix = "js"
         sys.path.append(syspath)
