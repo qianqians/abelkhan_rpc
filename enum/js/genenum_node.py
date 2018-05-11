@@ -5,7 +5,7 @@
 def genenum(enum_name, enums):
         code = "/*this enum code is codegen by abelkhan codegen for js*/\n\n"
 
-        code += enum_name + " = {\n"
+        code += "var " + enum_name + " = {\n"
         count = 0;
         for key, value in enums:
             code += "    " + key + " : " + str(value)

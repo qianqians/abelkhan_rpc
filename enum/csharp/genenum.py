@@ -12,6 +12,6 @@ def genenum(enum_name, enums):
             count = count + 1
             if count < len(enums):
                 code += ",\n"
-        code += "    \n}\n"
+        code += "\n    }\n"
 
         return code
