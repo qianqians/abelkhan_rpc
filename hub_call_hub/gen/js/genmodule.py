@@ -108,7 +108,7 @@ def gen_module_module(module_name, funcs):
 
         return rsp_code + code
 
-def genmodule(module_name, funcs):
+def genmodule(fname, modules, enums):
         head_code = "/*this rsp file is codegen by abelkhan for js*/\n\n"
 
         module_code = ""

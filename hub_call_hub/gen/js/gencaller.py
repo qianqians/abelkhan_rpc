@@ -70,8 +70,8 @@ def gen_module_caller(module_name, funcs):
                         for item in i[4]:
                                 cb_code += ", argv" + str(count)
                                 count = count + 1
-                                if count < len(i[4]):
-                                        cb_code += ", "
+                                #if count < len(i[4]):
+                                #        cb_code += ", "
                         cb_code += ")\n    {\n"
                         cb_code += "        var rsp = this.map_" + func_name + "[uuid];\n"
                         cb_code += "        rsp.cb("
@@ -90,8 +90,8 @@ def gen_module_caller(module_name, funcs):
                         for item in i[6]:
                                 cb_code += ", argv" + str(count)
                                 count = count + 1
-                                if count < len(i[6]):
-                                        cb_code += ", "
+                                #if count < len(i[6]):
+                                #        cb_code += ", "
                         cb_code += ")\n    {\n"
                         cb_code += "        var rsp = this.map_" + func_name + "[uuid];\n"
                         cb_code += "        rsp.err("
